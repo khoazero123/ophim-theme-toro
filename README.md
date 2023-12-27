@@ -2,7 +2,7 @@
 
 ## Demo
 ### Trang Chủ
-![Alt text](https://i.ibb.co/WzsL2vL/THEME-TORO-INDEX.png "Home Page")
+![Alt text](https://i.ibb.co/WzsL2vL/THEME-TORO-INDEX.png?home "Home Page")
 
 ### Trang Danh Sách Phim
 ![Alt text](https://i.ibb.co/W29D6Pp/THEME-TORO-CATALOG.png "Catalog Page")
@@ -12,9 +12,6 @@
 
 ### Trang Xem Phim
 ![Alt text](https://i.ibb.co/QfcscDD/THEME-TORO-EPISODE.png "Episode Page")
-
-## Requirements
-https://github.com/hacoidev/ophim-core
 
 ## Install
 1. Tại thư mục của Project: `composer require ophimcms/theme-toro`

@@ -25,7 +25,7 @@ class ThemeToroServiceProvider extends ServiceProvider
         config(['themes' => array_merge(config('themes', []), [
             'toro' => [
                 'name' => 'Theme Toro',
-                'author' => 'opdlnf01@gmail.com',
+                'author' => 'support@megavn.net',
                 'package_name' => 'ophimcms/theme-toro',
                 'publishes' => ['toro-assets'],
                 'preview_image' => '',
@@ -69,7 +69,7 @@ class ThemeToroServiceProvider extends ServiceProvider
                     [
                         'name' => 'latest',
                         'label' => 'Home Page Main',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'hint' => 'display_label|relation|find_by_field|value|sort_by_field|sort_algo|limit|show_more_url|show_template (section_thumb|section_poster)',
                         'value' => <<<EOT
                         Phim chiếu rạp mới||is_shown_in_theater|1|created_at|desc|6|/danh-sach/phim-chieu-rap|section_poster
@@ -85,7 +85,7 @@ class ThemeToroServiceProvider extends ServiceProvider
                     [
                         'name' => 'hotest',
                         'label' => 'Rightbar',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'hint' => 'Label|relation|find_by_field|value|sort_by_field|sort_algo|limit|show_template (rightbar_text|rightbar_thumb|rightbar_thumb_2)',
                         'value' => <<<EOT
                         Sắp chiếu||status|trailer|publish_year|desc|5|rightbar_text
@@ -100,7 +100,7 @@ class ThemeToroServiceProvider extends ServiceProvider
                     [
                         'name' => 'additional_css',
                         'label' => 'Additional CSS',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'value' => "",
                         'tab' => 'Custom CSS'
                     ],
@@ -114,28 +114,28 @@ class ThemeToroServiceProvider extends ServiceProvider
                     [
                         'name' => 'additional_header_js',
                         'label' => 'Header JS',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'value' => "",
                         'tab' => 'Custom JS'
                     ],
                     [
                         'name' => 'additional_body_js',
                         'label' => 'Body JS',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'value' => "",
                         'tab' => 'Custom JS'
                     ],
                     [
                         'name' => 'additional_footer_js',
                         'label' => 'Footer JS',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'value' => "",
                         'tab' => 'Custom JS'
                     ],
                     [
                         'name' => 'footer',
                         'label' => 'Footer',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'value' => <<<EOT
                             <footer class="Footer">
                                 <div class="Bot">
@@ -151,7 +151,7 @@ class ThemeToroServiceProvider extends ServiceProvider
                     [
                         'name' => 'ads_header',
                         'label' => 'Ads header',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'value' => <<<EOT
 
                         EOT,
@@ -160,7 +160,7 @@ class ThemeToroServiceProvider extends ServiceProvider
                     [
                         'name' => 'ads_catfish',
                         'label' => 'Ads catfish',
-                        'type' => 'code',
+                        'type' => 'textarea',
                         'value' => <<<EOT
 
                         EOT,
