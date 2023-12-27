@@ -1,7 +1,7 @@
 @extends('themes::layout')
 
 @php
-    $menu = \Ophim\Core\Models\Menu::getTree();
+    $menu = \App\Models\Menu::getTree();
     $tops = Cache::remember('site.movies.tops', setting('site_cache_ttl', 5 * 60), function () {
         $lists = preg_split('/[\n\r]+/', get_theme_option('hotest'));
         $data = [];
@@ -13,7 +13,7 @@
                     $data[] = [
                         'label' => $label,
                         'template' => $template,
-                        'data' => \Ophim\Core\Models\Movie::when($relation, function ($query) use ($relation, $field, $val) {
+                        'data' => \App\Models\Movie::when($relation, function ($query) use ($relation, $field, $val) {
                             $query->whereHas($relation, function ($rel) use ($field, $val) {
                                 $rel->where($field, $val);
                             });

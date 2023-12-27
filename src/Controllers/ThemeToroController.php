@@ -4,14 +4,14 @@ namespace Ophim\ThemeToro\Controllers;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Http\Request;
-use Ophim\Core\Models\Actor;
-use Ophim\Core\Models\Catalog;
-use Ophim\Core\Models\Category;
-use Ophim\Core\Models\Director;
-use Ophim\Core\Models\Episode;
-use Ophim\Core\Models\Movie;
-use Ophim\Core\Models\Region;
-use Ophim\Core\Models\Tag;
+use App\Models\Actor;
+use App\Models\Catalog;
+use App\Models\Category;
+use App\Models\Director;
+use App\Models\Episode;
+use App\Models\Movie;
+use App\Models\Country as Region;
+use App\Models\Tag;
 
 use Illuminate\Support\Facades\Cache;
 
@@ -240,7 +240,7 @@ class ThemeToroController
 
             [$relation_table, $relation_field, $relation_val] = array_merge($relation_config, ['', '', '']);
             try {
-                $movies = \Ophim\Core\Models\Movie::when($relation_table, function ($query) use ($relation_table, $relation_field, $relation_val, $field, $val) {
+                $movies = Movie::when($relation_table, function ($query) use ($relation_table, $relation_field, $relation_val, $field, $val) {
                     $query->whereHas($relation_table, function ($rel) use ($relation_field, $relation_val, $field, $val) {
                         $rel->where($relation_field, $relation_val)->where(array_combine(explode(",", $field), explode(",", $val)));
                     });

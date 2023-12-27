@@ -1,7 +1,7 @@
 @extends('themes::themetoro.layout')
 
 @php
-    use Ophim\Core\Models\Movie;
+    use App\Models\Movie;
 
     $home_page_slider_poster = Cache::remember('site.movies.home_page_slider_poster', setting('site_cache_ttl', 5 * 60), function () {
         $list = get_theme_option('home_page_slider_poster');
