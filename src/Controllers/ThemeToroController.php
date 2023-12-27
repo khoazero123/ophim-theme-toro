@@ -14,6 +14,7 @@ use App\Models\Country as Region;
 use App\Models\Tag;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ThemeToroController
 {
@@ -63,85 +64,53 @@ class ThemeToroController
         $title = Setting::get('site_homepage_title');
 
         $home_page_slider_poster = Cache::remember('site.movies.home_page_slider_poster', setting('site_cache_ttl', 5 * 60), function () {
-            $list = get_theme_option('home_page_slider_poster');
+            $list = get_theme_option('home_page_slider_poster') ?: [];
+            if(empty($list)) return [];
             $data = [];
-            if(trim($list)) {
-                $list = explode('|', $list);
-                [$label, $relation, $field, $val, $sortKey, $alg, $limit] = array_merge($list, ['Phim đề cử', '', 'is_recommended', '1', 'updated_at', 'desc', 10]);
-                try {
-                    $data = [
-                        'label' => $label,
-                        'data' => Movie::when($relation, function ($query) use ($relation, $field, $val) {
-                                $query->whereHas($relation, function ($rel) use ($field, $val) {
-                                $rel->where($field, $val);
-                            });
-                        })
-                        ->when(!$relation, function ($query) use ($field, $val) {
-                            $query->where($field, $val);
-                        })
-                        ->orderBy($sortKey, $alg)
-                        ->limit($limit)
-                        ->get()
-                    ];
-                } catch (\Exception $e) {
-                }
+            $list = $list[0];
+            try {
+                $movies = query_movies($list);
+                $data = [
+                    'label' => $list['label'],
+                    'data' => $movies,
+                ];
+            } catch (\Exception $e) {
+                Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
             }
             return $data;
         });
     
         $home_page_slider_thumb = Cache::remember('site.movies.home_page_slider_thumb', setting('site_cache_ttl', 5 * 60), function () {
-            $list = get_theme_option('home_page_slider_thumb');
+            $list = get_theme_option('home_page_slider_thumb') ?: [];
+            if(empty($list)) return [];
             $data = [];
-            if(trim($list)) {
-                $list = explode('|', $list);
-                [$label, $relation, $field, $val, $sortKey, $alg, $limit] = array_merge($list, ['Phim mới cập nhật', '', 'is_copyright', '0', 'updated_at', 'desc', 20]);
-                try {
-                    $data = [
-                        'label' => $label,
-                        'data' => Movie::when($relation, function ($query) use ($relation, $field, $val) {
-                                $query->whereHas($relation, function ($rel) use ($field, $val) {
-                                $rel->where($field, $val);
-                            });
-                        })
-                        ->when(!$relation, function ($query) use ($field, $val) {
-                            $query->where($field, $val);
-                        })
-                        ->orderBy($sortKey, $alg)
-                        ->limit($limit)
-                        ->get()
-                    ];
-                } catch (\Exception $e) {
-                }
+            $list = $list[0];
+            try {
+                $movies = query_movies($list);
+                $data = [
+                    'label' => $list['label'],
+                    'data' => $movies,
+                ];
+            } catch (\Exception $e) {
+                Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
             }
             return $data;
         });
     
         $data = Cache::remember('site.movies.latest', setting('site_cache_ttl', 5 * 60), function () {
-            $lists = preg_split('/[\n\r]+/', get_theme_option('latest'));
+            $lists = get_theme_option('latest');
             $data = [];
             foreach ($lists as $list) {
-                if (trim($list)) {
-                    $list = explode('|', $list);
-                    [$label, $relation, $field, $val, $sortKey, $alg, $limit, $link, $show_template] = array_merge($list, ['Phim mới cập nhật', '', '', 'type', 'series', 'created_at', 'desc', 8, '/', 'section_thumb']);
-                    try {
-                        $data[] = [
-                            'label' => $label,
-                            'show_template' => $show_template,
-                            'data' => Movie::when($relation, function ($query) use ($relation, $field, $val) {
-                                $query->whereHas($relation, function ($rel) use ($field, $val) {
-                                    $rel->where($field, $val);
-                                });
-                            })
-                                ->when(!$relation, function ($query) use ($field, $val) {
-                                    $query->where($field, $val);
-                                })
-                                ->orderBy($sortKey, $alg)
-                                ->limit($limit)
-                                ->get(),
-                            'link' => $link ?: '#',
-                        ];
-                    } catch (\Exception $e) {
-                    }
+                try {
+                    $movies = query_movies($list);
+                    $data[] = [
+                        'label' => $list['label'],
+                        'show_template' => $list['show_template'],
+                        'data' => $movies,
+                        'link' => $list['show_more_url'] ?: '#',
+                    ];
+                } catch (\Exception $e) {
+                    Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
                 }
             }
             return $data;

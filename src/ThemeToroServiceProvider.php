@@ -3,6 +3,8 @@
 namespace Ophim\ThemeToro;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ThemeToroServiceProvider extends ServiceProvider
 {
@@ -13,6 +15,32 @@ class ThemeToroServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        view()->composer('themes::themetoro.inc.header', function ($view) {
+            $menu = \App\Models\Menu::getTree();
+            $view->with('menu', $menu);
+        });
+        view()->composer('themes::themetoro.inc.rightbar', function ($view) {
+            $tops = Cache::remember('site.movies.tops', setting('site_cache_ttl', 5 * 60), function () {
+                $lists = get_theme_option('hotest');
+                $data = [];
+                foreach ($lists as $list) {
+                    try {
+                        $movies = query_movies($list);
+                        $data[] = [
+                            'label' => $list['label'],
+                            'template' => $list['show_template'],
+                            'data' => $movies,
+                        ];
+                    } catch (\Exception $e) {
+                        Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
+                    }
+                }
+                return $data;
+            });
+            
+            $view->with('tops', $tops);
+        });
+
         $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'themes');
 
         $this->publishes([
@@ -53,49 +81,173 @@ class ThemeToroServiceProvider extends ServiceProvider
                     [
                         'name' => 'home_page_slider_poster',
                         'label' => 'Home page slider poster',
-                        'type' => 'text',
-                        'hint' => 'Label|relation|find_by_field|value|sort_by_field|sort_algo|limit',
-                        'value' => 'Phim đề cử||is_recommended|1|updated_at|desc|10',
-                        'tab' => 'List'
+                        'type' => 'table',
+                        'tab' => 'List',
+                        'columns'         => [
+                            'label'  => 'Label',
+                            'relation'  => 'Relation',
+                            'find_by_field' => 'Find by field',
+                            'value' => 'Value',
+                            'sort_by_field' => 'Sort by field',
+                            'sort_algo' => 'Sort direction',
+                            'limit' => 'Limit',
+                        ],
+                        'default'    => [
+                            [
+                                'label' => 'Phim đề cử',
+                                'relation' => '',
+                                'find_by_field' => 'is_recommended',
+                                'value' => '1',
+                                'sort_by_field' => 'updated_at',
+                                'sort_algo' => 'desc',
+                                'limit' => '10',
+                            ],
+                        ],
+                        'min' => 1,
+                        'max' => 1,
                     ],
                     [
                         'name' => 'home_page_slider_thumb',
                         'label' => 'Home page slider thumb',
-                        'type' => 'text',
-                        'hint' => 'Label|relation|find_by_field|value|sort_by_field|sort_algo|limit',
-                        'value' => 'Phim mới cập nhật||is_copyright|0|updated_at|desc|24',
-                        'tab' => 'List'
+                        'type' => 'table',
+                        'tab' => 'List',
+                        'columns'         => [
+                            'label'  => 'Label',
+                            'relation'  => 'Relation',
+                            'find_by_field' => 'Find by field',
+                            'value' => 'Value',
+                            'sort_by_field' => 'Sort by field',
+                            'sort_algo' => 'Sort direction',
+                            'limit' => 'Limit',
+                        ],
+                        'default'    => [
+                            [
+                                'label' => 'Phim mới cập nhật',
+                                'relation' => '',
+                                'find_by_field' => 'is_copyright',
+                                'value' => '0',
+                                'sort_by_field' => 'updated_at',
+                                'sort_algo' => 'desc',
+                                'limit' => '24',
+                            ],
+                        ],
+                        'min' => 1,
+                        'max' => 1,
                     ],
                     [
                         'name' => 'latest',
                         'label' => 'Home Page Main',
-                        'type' => 'textarea',
-                        'hint' => 'display_label|relation|find_by_field|value|sort_by_field|sort_algo|limit|show_more_url|show_template (section_thumb|section_poster)',
-                        'value' => <<<EOT
-                        Phim chiếu rạp mới||is_shown_in_theater|1|created_at|desc|6|/danh-sach/phim-chieu-rap|section_poster
-                        Phim bộ mới||type|series|updated_at|desc|16|/danh-sach/phim-bo|section_thumb
-                        Phim lẻ mới||type|single|updated_at|desc|16|/danh-sach/phim-le|section_thumb
-                        Phim hoạt hình mới|categories|slug|hoat-hinh|updated_at|desc|12|/the-loai/hoat-hinh|section_poster
-                        EOT,
-                        'attributes' => [
-                            'rows' => 5
+                        'type' => 'table',
+                        'tab' => 'List',
+                        'columns'         => [
+                            'label'  => 'Label',
+                            'relation'  => 'Relation',
+                            'find_by_field' => 'Find by field',
+                            'value' => 'Value',
+                            'sort_by_field' => 'Sort by field',
+                            'sort_algo' => 'Sort direction',
+                            'limit' => 'Limit',
+                            'show_more_url' => 'Show more url',
+                            'show_template' => 'Show template', // section_thumb|section_poster
                         ],
-                        'tab' => 'List'
+                        'default'    => [
+                            [
+                                'label' => 'Phim chiếu rạp mới',
+                                'relation' => '',
+                                'find_by_field' => 'is_shown_in_theater',
+                                'value' => '1',
+                                'sort_by_field' => 'created_at',
+                                'sort_algo' => 'desc',
+                                'limit' => '6',
+                                'show_more_url' => '/danh-sach/phim-chieu-rap',
+                                'show_template' => 'section_thumb',
+                            ],
+                            [
+                                'label' => 'Phim bộ mới',
+                                'relation' => '',
+                                'find_by_field' => 'type',
+                                'value' => 'series',
+                                'sort_by_field' => 'updated_at',
+                                'sort_algo' => 'desc',
+                                'limit' => '16',
+                                'show_more_url' => '/danh-sach/phim-bo',
+                                'show_template' => 'section_thumb',
+                            ],
+                            [
+                                'label' => 'Phim lẻ mới',
+                                'relation' => '',
+                                'find_by_field' => 'type',
+                                'value' => 'single',
+                                'sort_by_field' => 'updated_at',
+                                'sort_algo' => 'desc',
+                                'limit' => '16',
+                                'show_more_url' => '/danh-sach/phim-le',
+                                'show_template' => 'section_thumb',
+                            ],
+                            [
+                                'label' => 'Phim hoạt hình mới',
+                                'relation' => 'categories',
+                                'find_by_field' => 'slug',
+                                'value' => 'hoat-hinh',
+                                'sort_by_field' => 'updated_at',
+                                'sort_algo' => 'desc',
+                                'limit' => '12',
+                                'show_more_url' => '/the-loai/hoat-hinh',
+                                'show_template' => 'section_thumb',
+                            ],
+                        ],
+                        'min' => 1,
+                        'max' => 10,
                     ],
                     [
                         'name' => 'hotest',
                         'label' => 'Rightbar',
-                        'type' => 'textarea',
-                        'hint' => 'Label|relation|find_by_field|value|sort_by_field|sort_algo|limit|show_template (rightbar_text|rightbar_thumb|rightbar_thumb_2)',
-                        'value' => <<<EOT
-                        Sắp chiếu||status|trailer|publish_year|desc|5|rightbar_text
-                        Top phim lẻ||type|single|view_week|desc|5|rightbar_thumb
-                        Top phim bộ||type|series|view_week|desc|6|rightbar_thumb_2
-                        EOT,
-                        'attributes' => [
-                            'rows' => 5
+                        'type' => 'table',
+                        'tab' => 'List',
+                        'columns'         => [
+                            'label'  => 'Label',
+                            'relation'  => 'Relation',
+                            'find_by_field' => 'Find by field',
+                            'value' => 'Value',
+                            'sort_by_field' => 'Sort by field',
+                            'sort_algo' => 'Sort direction',
+                            'limit' => 'Limit',
+                            'show_template' => 'Show template', // rightbar_text|rightbar_thumb|rightbar_thumb_2
                         ],
-                        'tab' => 'List'
+                        'default'    => [
+                            [
+                                'label' => 'Sắp chiếu',
+                                'relation' => '',
+                                'find_by_field' => 'status',
+                                'value' => 'trailer',
+                                'sort_by_field' => 'publish_year',
+                                'sort_algo' => 'desc',
+                                'limit' => '10',
+                                'show_template' => 'rightbar_text',
+                            ],
+                            [
+                                'label' => 'Top phim lẻ',
+                                'relation' => '',
+                                'find_by_field' => 'type',
+                                'value' => 'single',
+                                'sort_by_field' => 'views_week',
+                                'sort_algo' => 'desc',
+                                'limit' => '5',
+                                'show_template' => 'rightbar_thumb',
+                            ],
+                            [
+                                'label' => 'Top phim bộ',
+                                'relation' => '',
+                                'find_by_field' => 'type',
+                                'value' => 'series',
+                                'sort_by_field' => 'views_week',
+                                'sort_algo' => 'desc',
+                                'limit' => '6',
+                                'show_template' => 'rightbar_thumb_2',
+                            ],
+                        ],
+                        'min' => 1,
+                        'max' => 10,
                     ],
                     [
                         'name' => 'additional_css',
