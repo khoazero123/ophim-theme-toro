@@ -1,4 +1,4 @@
-@extends('themes::layout')
+@extends('themes.layout')
 
 @php
     $menu = \App\Models\Menu::getTree();
