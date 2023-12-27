@@ -154,20 +154,18 @@ class ThemeToroController
     public function getMovieOverview(Request $request)
     {
         /** @var Movie */
-        $movie = Movie::fromCache()->find($request->movie ?: $request->id);
-
-        if (is_null($movie)) abort(404);
+        $movie = Movie::where('slug', $request->movie)->orWhere('id', $request->movie)->firstOrFail();
 
         $movie->generateSeoTags();
 
-        $movie->increment('view_total', 1);
-        $movie->increment('view_day', 1);
-        $movie->increment('view_week', 1);
-        $movie->increment('view_month', 1);
+        $movie->increment('views', 1);
+        $movie->increment('views_day', 1);
+        $movie->increment('views_week', 1);
+        $movie->increment('views_month', 1);
 
         $movie_related_cache_key = 'movie_related:' . $movie->id;
-        $movie_related = Cache::get($movie_related_cache_key);
-        if(is_null($movie_related)) {
+        $movie_related = Cache::get($movie_related_cache_key, []);
+        if(is_null($movie_related) && $movie->categories->count() > 0) {
             $movie_related = $movie->categories[0]->movies()->inRandomOrder()->limit(get_theme_option('movie_related_limit', 10))->get();
             Cache::put($movie_related_cache_key, $movie_related, setting('site_cache_ttl', 5 * 60));
         }
@@ -202,7 +200,7 @@ class ThemeToroController
 
         $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key);
-        if(is_null($movie_related)) {
+        if(is_null($movie_related) && $movie->categories) {
             $movie_related = $movie->categories[0]->movies()->inRandomOrder()->limit(get_theme_option('movie_related_limit', 10))->get();
             Cache::put($movie_related_cache_key, $movie_related, setting('site_cache_ttl', 5 * 60));
         }
