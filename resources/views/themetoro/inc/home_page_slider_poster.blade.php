@@ -24,7 +24,7 @@
                                     @endif
                                 </span>
                                 <span class="Time">{{$movie->episode_time}}</span> <span
-                                    class="Views AAIco-remove_red_eye">{{$movie->view_total}}</span>
+                                    class="Views AAIco-remove_red_eye">{{$movie->views}}</span>
                             </div>
                             <div class="Description">
                                 <p>

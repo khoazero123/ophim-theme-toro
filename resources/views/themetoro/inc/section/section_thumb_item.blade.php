@@ -25,7 +25,7 @@
                 <span class="Qlty">{{$movie->quality}}</span>
                 <span class="Qlty">{{$movie->language}}</span>
                 <span class="Time">{{$movie->episode_time}}</span>
-                <span class="Views AAIco-remove_red_eye">{{$movie->view_total}}</span>
+                <span class="Views AAIco-remove_red_eye">{{$movie->views}}</span>
             </div>
             <div class="Description">
                 <p>{!! mb_substr(strip_tags($movie->content),0,100, "utf-8") !!}...</p>

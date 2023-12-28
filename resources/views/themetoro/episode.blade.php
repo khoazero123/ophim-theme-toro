@@ -18,7 +18,7 @@
                         <i class="fa-chevron-down"></i>
                     </button>
                     <ul class="optnslst trsrcbx">
-                        @foreach ($currentMovie->episodes->where('slug', $episode->slug)->where('server', $episode->server) as $server)
+                        @foreach ($currentMovie->episodes->where('slug', $episode->slug) as $server)
                             <li>
                                 <a onclick="chooseStreamingServer(this)" data-type="{{ $server->type }}" data-id="{{ $server->id }}" data-link="{{ $server->link }}" class="streaming-server Button sgty">
                                     <span class="nmopt">0{{ $loop->index + 1 }}</span>
@@ -96,7 +96,7 @@
                         @endswitch
                         </span>
                     <span class="Time">{{$currentMovie->episode_time}}</span>
-                    <span class="Views AAIco-remove_red_eye">{{$currentMovie->view_total}}</span>
+                    <span class="Views AAIco-remove_red_eye">{{$currentMovie->views}}</span>
                     {!! $currentMovie->regions->map(function ($region) {
                            return '<span class="Qlty"><a href="'.$region->getUrl().'">'.$region->name.'</a></span>';
                     })->implode(' ') !!}
@@ -183,12 +183,12 @@
     <script src="/themes/toro/player/js/p2p-media-loader-core.min.js"></script>
     <script src="/themes/toro/player/js/p2p-media-loader-hlsjs.min.js"></script>
 
-    <script src="/js/jwplayer-8.9.3.js"></script>
-    <script src="/js/hls.min.js"></script>
-    <script src="/js/jwplayer.hlsjs.min.js"></script>
+    <script src="/themes/toro/js/jwplayer-8.9.3.js"></script>
+    <script src="/themes/toro/js/hls.min.js"></script>
+    <script src="/themes/toro/js/jwplayer.hlsjs.min.js"></script>
 
     <script>
-        var episode_id = {{$episode->id}};
+        var episode_id = '{{$episode->id}}';
         const wrapper = document.getElementById('VideoOption01');
         const vastAds = "{{ Setting::get('jwplayer_advertising_file') }}";
 
@@ -216,6 +216,7 @@
         }
 
         function renderPlayer(type, link, id) {
+            console.log('renderPlayer', {type, link, id});
             if (type == 'embed') {
                 if (vastAds) {
                     wrapper.innerHTML = `<div id="fake_jwplayer"></div>`;
@@ -232,7 +233,7 @@
                             tag: "{{ Setting::get('jwplayer_advertising_file') }}",
                             client: "vast",
                             vpaidmode: "insecure",
-                            skipoffset: {{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}, // Bỏ qua quảng cáo trong vòng 5 giây
+                            skipoffset: "{{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}", // Bỏ qua quảng cáo trong vòng 5 giây
                             skipmessage: "Bỏ qua sau xx giây",
                             skiptext: "Bỏ qua"
                         }
@@ -299,7 +300,7 @@
                         tag: "{{ Setting::get('jwplayer_advertising_file') }}",
                         client: "vast",
                         vpaidmode: "insecure",
-                        skipoffset: {{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}, // Bỏ qua quảng cáo trong vòng 5 giây
+                        skipoffset: "{{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}", // Bỏ qua quảng cáo trong vòng 5 giây
                         skipmessage: "Bỏ qua sau xx giây",
                         skiptext: "Bỏ qua"
                     }
@@ -407,6 +408,7 @@
             }
 
             const servers = document.getElementsByClassName('streaming-server');
+            console.log({servers});
             if (servers[0]) {
                 servers[0].click();
             }
@@ -435,7 +437,7 @@
     <script>
         var rated = false;
         $('#movies-rating-star').raty({
-            score: {{ $currentMovie->getRatingStar() }},
+            score: '{{ $currentMovie->getRatingStar() }}',
             number: 10,
             numberMax: 10,
             hints: ['quá tệ', 'tệ', 'không hay', 'không hay lắm', 'bình thường', 'xem được', 'có vẻ hay', 'hay',

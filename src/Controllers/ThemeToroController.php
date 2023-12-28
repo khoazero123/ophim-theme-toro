@@ -50,7 +50,7 @@ class ThemeToroController
                     return $movie->orderBy('publish_year', 'desc');
                 }
                 if (request('filter')['sort'] == 'view') {
-                    return $movie->orderBy('view_total', 'desc');
+                    return $movie->orderBy('views', 'desc');
                 }
             })->paginate(get_theme_option('per_page_limit'));
 
@@ -148,9 +148,8 @@ class ThemeToroController
 
     public function getEpisode(Request $request)
     {
-        $movie = Movie::fromCache()->find($request->movie ?: $request->movie_id)->load('episodes');
-
-        if (is_null($movie)) abort(404);
+        $movie = Movie::where('slug', $request->movie)->orWhere('id', $request->movie)->firstOrFail();
+        $movie->load('episodes');
 
         /** @var Episode */
         $episode_id = $request->id;
@@ -162,10 +161,10 @@ class ThemeToroController
 
         $episode->generateSeoTags();
 
-        $movie->increment('view_total', 1);
-        $movie->increment('view_day', 1);
-        $movie->increment('view_week', 1);
-        $movie->increment('view_month', 1);
+        $movie->increment('views', 1);
+        $movie->increment('views_day', 1);
+        $movie->increment('views_week', 1);
+        $movie->increment('views_month', 1);
 
         $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key);
