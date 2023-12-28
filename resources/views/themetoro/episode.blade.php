@@ -18,9 +18,9 @@
                         <i class="fa-chevron-down"></i>
                     </button>
                     <ul class="optnslst trsrcbx">
-                        @foreach ($currentMovie->episodes->where('slug', $episode->slug) as $server)
+                        @foreach ($server_episodes as $episode)
                             <li>
-                                <a onclick="chooseStreamingServer(this)" data-type="{{ $server->type }}" data-id="{{ $server->id }}" data-link="{{ $server->link }}" class="streaming-server Button sgty">
+                                <a onclick="chooseStreamingServer(this)" data-type="{{ $episode->video->file_ext ?: 'mp4' }}" data-id="{{ $episode->id }}" data-link="{{ $episode->getVideoUrl() }}" class="streaming-server Button sgty">
                                     <span class="nmopt">0{{ $loop->index + 1 }}</span>
                                     <span>Nguồn Phát <span>#0{{ $loop->index + 1 }}</span></span>
                                 </a>
@@ -48,7 +48,7 @@
         @foreach ($currentMovie->episodes->sortBy([['server', 'asc']])->groupBy('server') as $server => $data)
             <section class="SeasonBx AACrdn">
                 <div class="Top AAIco-playlist_play AALink episodes-view episodes-load">
-                    <div class="Title"><a href="#">Danh sách tập <span>{{ $server }}</span></a></div>
+                    <div class="Title"><a href="#">Danh sách tập <span>{{ json_decode($server)->name }}</span></a></div>
                 </div>
                 <ul class="AZList">
                     @foreach ($data->sortByDesc('name', SORT_NATURAL)->groupBy('name') as $name => $item)

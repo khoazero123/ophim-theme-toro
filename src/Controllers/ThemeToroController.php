@@ -157,7 +157,7 @@ class ThemeToroController
             return $collection->where('id', $episode_id);
         })->firstWhere('slug', $request->episode);
 
-        if (is_null($episode)) abort(404);
+        $server_episodes = $movie->episodes()->where('slug', $episode->slug)->get();
 
         $episode->generateSeoTags();
 
@@ -177,6 +177,7 @@ class ThemeToroController
             'currentMovie' => $movie,
             'movie_related' => $movie_related,
             'episode' => $episode,
+            'server_episodes' => $server_episodes,
             'title' => $episode->getTitle()
         ]);
     }
