@@ -10,7 +10,7 @@ use App\Models\Category;
 use App\Models\Director;
 use App\Models\Episode;
 use App\Models\Movie;
-use App\Models\Country as Region;
+use App\Models\Region;
 use App\Models\Tag;
 
 use Illuminate\Support\Facades\Cache;
@@ -191,10 +191,10 @@ class ThemeToroController
 
         $category->generateSeoTags();
 
-        $movies = $category->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
+        $movies = $category->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit', 15));
 
         return view('themes::themetoro.catalog', [
-            'data' => $movies,
+            'movies' => $movies,
             'category' => $category,
             'title' => $category->seo_title ?: $category->getTitle(),
             'section_name' => "Phim thể loại $category->name"
@@ -213,7 +213,7 @@ class ThemeToroController
         $movies = $region->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themetoro.catalog', [
-            'data' => $movies,
+            'movies' => $movies,
             'region' => $region,
             'title' => $region->seo_title ?: $region->getTitle(),
             'section_name' => "Phim quốc gia $region->name"
@@ -232,7 +232,7 @@ class ThemeToroController
         $movies = $actor->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themetoro.catalog', [
-            'data' => $movies,
+            'movies' => $movies,
             'person' => $actor,
             'title' => $actor->getTitle(),
             'section_name' => "Diễn viên $actor->name"
@@ -251,7 +251,7 @@ class ThemeToroController
         $movies = $director->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themetoro.catalog', [
-            'data' => $movies,
+            'movies' => $movies,
             'person' => $director,
             'title' => $director->getTitle(),
             'section_name' => "Đạo diễn $director->name"
@@ -269,7 +269,7 @@ class ThemeToroController
 
         $movies = $tag->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
         return view('themes::themetoro.catalog', [
-            'data' => $movies,
+            'movies' => $movies,
             'tag' => $tag,
             'title' => $tag->getTitle(),
             'section_name' => "Tags: $tag->name"
@@ -280,36 +280,24 @@ class ThemeToroController
     {
         /** @var Catalog */
         $catalog = Catalog::fromCache()->find($request->type ?: $request->id);
-
+        $page = $request['page'] ?: 1;
         if (is_null($catalog)) abort(404);
 
         $catalog->generateSeoTags();
 
-        $cache_key = 'catalog:' . $catalog->id . ':page:' . ($request['page'] ?: 1);
+        $cache_key = 'catalog:' . $catalog->id . ':page:' . $page;
         $movies = Cache::get($cache_key);
         if(is_null($movies)) {
-            $value = explode('|', trim($catalog->value));
-            [$relation_config, $field, $val, $sortKey, $alg] = array_merge($value, ['', 'is_copyright', 0, 'created_at', 'desc']);
-            $relation_config = explode(',', $relation_config);
-
-            [$relation_table, $relation_field, $relation_val] = array_merge($relation_config, ['', '', '']);
-            try {
-                $movies = Movie::when($relation_table, function ($query) use ($relation_table, $relation_field, $relation_val, $field, $val) {
-                    $query->whereHas($relation_table, function ($rel) use ($relation_field, $relation_val, $field, $val) {
-                        $rel->where($relation_field, $relation_val)->where(array_combine(explode(",", $field), explode(",", $val)));
-                    });
-                })->when(!$relation_table, function ($query) use ($field, $val) {
-                    $query->where(array_combine(explode(",", $field), explode(",", $val)));
-                })
-                ->orderBy($sortKey, $alg)
-                ->paginate($catalog->paginate);
-
+            $movies = $catalog->movies()->paginate(20);
+            if ($movies->total()) {
                 Cache::put($cache_key, $movies, setting('site_cache_ttl', 5 * 60));
-            } catch (\Exception $e) {}
+            } else {
+                Cache::put($cache_key, $movies, 10);
+            }
         }
 
         return view('themes::themetoro.catalog', [
-            'data' => $movies,
+            'movies' => $movies,
             'section_name' => "Danh sách $catalog->name"
         ]);
     }
