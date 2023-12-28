@@ -123,8 +123,8 @@ class ThemeToroController
     public function getMovieOverview(Request $request)
     {
         /** @var Movie */
-        $movie = Movie::where('slug', $request->movie)->orWhere('id', $request->movie)->firstOrFail();
-
+        $movie = Movie::fromCache()->findByKey('slug', $request->movie);
+        if (is_null($movie)) abort(404);
         $movie->generateSeoTags();
 
         $movie->increment('views', 1);
@@ -148,9 +148,8 @@ class ThemeToroController
 
     public function getEpisode(Request $request)
     {
-        $movie = Movie::where('slug', $request->movie)->orWhere('id', $request->movie)->firstOrFail();
-        $movie->load('episodes');
-
+        $movie = Movie::fromCache()->findByKey('slug', $request->movie)->load('episodes');
+        if (is_null($movie)) abort(404);
         /** @var Episode */
         $episode_id = $request->id;
         $episode = $movie->episodes->when($episode_id, function ($collection, $episode_id) {
@@ -185,11 +184,10 @@ class ThemeToroController
     public function getMovieOfCategory(Request $request)
     {
         /** @var Category */
-        $category = Category::fromCache()->find($request->category ?: $request->id);
-
+        $category = Category::fromCache()->findByKey('slug', $request->category);
         if (is_null($category)) abort(404);
 
-        $category->generateSeoTags();
+        // $category->generateSeoTags();
 
         $movies = $category->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit', 15));
 
@@ -204,8 +202,7 @@ class ThemeToroController
     public function getMovieOfRegion(Request $request)
     {
         /** @var Region */
-        $region = Region::fromCache()->find($request->region ?: $request->id);
-
+        $region = Region::fromCache()->findByKey('slug', $request->region);
         if (is_null($region)) abort(404);
 
         $region->generateSeoTags();
@@ -223,8 +220,7 @@ class ThemeToroController
     public function getMovieOfActor(Request $request)
     {
         /** @var Actor */
-        $actor = Actor::fromCache()->find($request->actor ?: $request->id);
-
+        $actor = Actor::fromCache()->findByKey('slug', $request->actor);
         if (is_null($actor)) abort(404);
 
         $actor->generateSeoTags();
@@ -242,8 +238,7 @@ class ThemeToroController
     public function getMovieOfDirector(Request $request)
     {
         /** @var Director */
-        $director = Director::fromCache()->find($request->director ?: $request->id);
-
+        $director = Director::fromCache()->findByKey('slug', $request->director);
         if (is_null($director)) abort(404);
 
         $director->generateSeoTags();
@@ -261,7 +256,7 @@ class ThemeToroController
     public function getMovieOfTag(Request $request)
     {
         /** @var Tag */
-        $tag = Tag::fromCache()->find($request->tag ?: $request->id);
+        $tag = Tag::fromCache()->findByKey('slug', $request->tag);
 
         if (is_null($tag)) abort(404);
 
@@ -279,7 +274,7 @@ class ThemeToroController
     public function getMovieOfType(Request $request)
     {
         /** @var Catalog */
-        $catalog = Catalog::fromCache()->find($request->type ?: $request->id);
+        $catalog = Catalog::fromCache()->findByKey('slug', $request->type);
         $page = $request['page'] ?: 1;
         if (is_null($catalog)) abort(404);
 
@@ -304,7 +299,7 @@ class ThemeToroController
 
     public function reportEpisode(Request $request, $movie, $slug)
     {
-        $movie = Movie::fromCache()->find($movie)->load('episodes');
+        $movie = Movie::fromCache()->findByKey('slug', $movie)->load('episodes');
 
         $episode = $movie->episodes->when(request('id'), function ($collection) {
             return $collection->where('id', request('id'));
