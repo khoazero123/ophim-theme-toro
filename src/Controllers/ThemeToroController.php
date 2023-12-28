@@ -65,8 +65,8 @@ class ThemeToroController
 
         $home_page_slider_poster = Cache::remember('site.movies.home_page_slider_poster', setting('site_cache_ttl', 5 * 60), function () {
             $list = get_theme_option('home_page_slider_poster') ?: [];
-            if(empty($list)) return [];
-            $data = [];
+            if(empty($list)) return null;
+            $data = null;
             $list = $list[0];
             try {
                 $movies = query_movies($list);
@@ -82,8 +82,8 @@ class ThemeToroController
     
         $home_page_slider_thumb = Cache::remember('site.movies.home_page_slider_thumb', setting('site_cache_ttl', 5 * 60), function () {
             $list = get_theme_option('home_page_slider_thumb') ?: [];
-            if(empty($list)) return [];
-            $data = [];
+            if(empty($list)) return null;
+            $data = null;
             $list = $list[0];
             try {
                 $movies = query_movies($list);
