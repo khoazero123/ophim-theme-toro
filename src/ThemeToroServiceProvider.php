@@ -16,6 +16,18 @@ class ThemeToroServiceProvider extends ServiceProvider
     public function boot()
     {
         view()->composer('themes::themetoro.inc.header', function ($view) {
+            $title = setting('site_homepage_title', config('app.name'));
+            $logo = setting('site_logo', '');
+            $brand = setting('site_brand', '');
+            if ($logo) {
+                $logo = getImageUrlByPath($logo);
+                $logo = "<img src=\"{$logo}\" alt=\"{$title}\" style=\"max-width: 245px;\"/>";
+            }
+            $view->with('logo', $logo);
+            $view->with('brand', $brand);
+            $view->with('title', $title);
+        });
+        view()->composer('themes::themetoro.inc.header', function ($view) {
             $menu = \App\Models\Menu::getTree();
             $view->with('menu', $menu);
         });

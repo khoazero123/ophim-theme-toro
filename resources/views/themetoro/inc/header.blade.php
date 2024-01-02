@@ -1,9 +1,5 @@
 @php
-    $logo = setting('site_logo', '');
-    $brand = setting('site_brand', '');
-    $title = isset($title) ? $title : setting('site_homepage_title', '');
-
-    // $menu is in src/ThemeToroServiceProvider.php
+    // data is in src/ThemeToroServiceProvider.php
 @endphp
 
 <header id="Hd" class="Header">
