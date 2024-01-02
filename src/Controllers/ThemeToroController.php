@@ -218,7 +218,7 @@ class ThemeToroController
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
             'region' => $region,
-            'title' => $region->seo_title ?: $region->getTitle(),
+            'title' => $region->seo_title ?: $region->name,
             'section_name' => "Phim quốc gia $region->name"
         ]);
     }
@@ -236,7 +236,7 @@ class ThemeToroController
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
             'person' => $actor,
-            'title' => $actor->getTitle(),
+            'title' => $actor->name,
             'section_name' => "Diễn viên $actor->name"
         ]);
     }
@@ -254,7 +254,7 @@ class ThemeToroController
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
             'person' => $director,
-            'title' => $director->getTitle(),
+            'title' => $director->name,
             'section_name' => "Đạo diễn $director->name"
         ]);
     }
@@ -272,7 +272,7 @@ class ThemeToroController
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
             'tag' => $tag,
-            'title' => $tag->getTitle(),
+            'title' => $tag->name,
             'section_name' => "Tags: $tag->name"
         ]);
     }
