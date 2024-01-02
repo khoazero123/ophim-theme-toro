@@ -4,6 +4,9 @@ namespace Ophim\ThemeToro\Controllers;
 
 use Backpack\Settings\app\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use App\Traits\HasSeoTags;
 use App\Models\Actor;
 use App\Models\Catalog;
 use App\Models\Category;
@@ -13,11 +16,10 @@ use App\Models\Movie;
 use App\Models\Region;
 use App\Models\Tag;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class ThemeToroController
 {
+    use HasSeoTags;
 
     public function index(Request $request)
     {
@@ -54,8 +56,10 @@ class ThemeToroController
                 }
             })->paginate(get_theme_option('per_page_limit'));
 
+            $this->generateSeoTags();
+
             return view('themes::themetoro.catalog', [
-                'data' => $data,
+                'movies' => $data,
                 'search' => $request['search'],
                 'section_name' => "Tìm kiếm phim: $request->search"
             ]);
@@ -139,11 +143,9 @@ class ThemeToroController
             Cache::put($movie_related_cache_key, $movie_related, setting('site_cache_ttl', 5 * 60));
         }
 
-        // $servers = $movie->episodes->sortBy([['server', 'asc']])->groupBy('server');
-
         return view('themes::themetoro.single', [
             'currentMovie' => $movie,
-            'title' => $movie->getTitle(),
+            'title' => $movie->name,
             'movie_related' => $movie_related
         ]);
     }
@@ -181,7 +183,7 @@ class ThemeToroController
             'movie_related' => $movie_related,
             'episode' => $episode,
             'server_episodes' => $server_episodes,
-            'title' => $episode->getTitle()
+            'title' => $episode->name
         ]);
     }
 
@@ -191,14 +193,14 @@ class ThemeToroController
         $category = Category::fromCache()->findByKey('slug', $request->category);
         if (is_null($category)) abort(404);
 
-        // $category->generateSeoTags();
+        $category->generateSeoTags();
 
         $movies = $category->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit', 15));
 
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
             'category' => $category,
-            'title' => $category->seo_title ?: $category->getTitle(),
+            'title' => $category->seo_title ?: $category->name,
             'section_name' => "Phim thể loại $category->name"
         ]);
     }

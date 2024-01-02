@@ -41,6 +41,8 @@ class ThemeToroServiceProvider extends ServiceProvider
             $view->with('tops', $tops);
         });
 
+        $this->bootSeoDefaults();
+
         $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'themes');
 
         $this->publishes([
@@ -321,5 +323,40 @@ class ThemeToroServiceProvider extends ServiceProvider
                 ],
             ]
         ])]);
+    }
+
+    protected function bootSeoDefaults()
+    {
+        config([
+            'seotools.meta.defaults.title' => setting('site_homepage_title'),
+            'seotools.meta.defaults.description' => setting('site_meta_description'),
+            'seotools.meta.defaults.keywords' => [setting('site_meta_keywords')],
+            'seotools.meta.defaults.canonical' => url("/")
+        ]);
+
+        config([
+            'seotools.opengraph.defaults.title' => setting('site_homepage_title'),
+            'seotools.opengraph.defaults.description' => setting('site_meta_description'),
+            'seotools.opengraph.defaults.type' => 'website',
+            'seotools.opengraph.defaults.url' => url("/"),
+            'seotools.opengraph.defaults.site_name' => setting('site_meta_siteName'),
+            'seotools.opengraph.defaults.images' => [setting('site_meta_image')],
+        ]);
+
+        config([
+            'seotools.twitter.defaults.card' => 'website',
+            'seotools.twitter.defaults.title' => setting('site_homepage_title'),
+            'seotools.twitter.defaults.description' => setting('site_meta_description'),
+            'seotools.twitter.defaults.url' => url("/"),
+            'seotools.twitter.defaults.site' => setting('site_meta_siteName'),
+            'seotools.twitter.defaults.image' => setting('site_meta_image'),
+        ]);
+
+        config([
+            'seotools.json-ld.defaults.title' => setting('site_homepage_title'),
+            'seotools.json-ld.defaults.type' => 'WebPage',
+            'seotools.json-ld.defaults.description' => setting('site_meta_description'),
+            'seotools.json-ld.defaults.images' => setting('site_meta_image'),
+        ]);
     }
 }
