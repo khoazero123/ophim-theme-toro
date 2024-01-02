@@ -56,7 +56,7 @@ class ThemeToroServiceProvider extends ServiceProvider
             'toro' => [
                 'name' => 'Theme Toro',
                 'author' => 'support@megavn.net',
-                'package_name' => 'ophimcms/theme-toro',
+                'package_name' => 'megavnet/ophim-theme-toro',
                 'publishes' => ['toro-assets'],
                 'preview_image' => '',
                 'options' => [

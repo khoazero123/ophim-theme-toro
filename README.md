@@ -14,11 +14,11 @@
 ![Alt text](https://i.ibb.co/QfcscDD/THEME-TORO-EPISODE.png "Episode Page")
 
 ## Install
-1. Tại thư mục của Project: `composer require ophimcms/theme-toro`
+1. Tại thư mục của Project: `composer require megavnet/ophim-theme-toro`
 2. Kích hoạt giao diện trong Admin Panel
 
 ## Update
-1. Tại thư mục của Project: `composer update ophimcms/theme-toro`
+1. Tại thư mục của Project: `composer update megavnet/ophim-theme-toro`
 2. Re-Activate giao diện trong Admin Panel
 
 ## Note
