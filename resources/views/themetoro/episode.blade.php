@@ -14,16 +14,23 @@
             <div class="optns-bx">
                 <div class="drpdn">
                     <button class="bstd Button">
-                        <span>Đổi server khi lỗi<span>2 server</span></span>
+                        <span>Đổi server khi lỗi<span>{{count($server_episodes)}} server</span></span>
                         <i class="fa-chevron-down"></i>
                     </button>
                     <ul class="optnslst trsrcbx">
                         @foreach ($server_episodes as $episode)
                             <li>
+                                @if ($episode->video)
                                 <a onclick="chooseStreamingServer(this)" data-type="{{ $episode->video->file_ext ?: 'mp4' }}" data-id="{{ $episode->id }}" data-link="{{ $episode->getVideoUrl() }}" class="streaming-server Button sgty">
                                     <span class="nmopt">0{{ $loop->index + 1 }}</span>
                                     <span>Nguồn Phát <span>#0{{ $loop->index + 1 }}</span></span>
                                 </a>
+                                @else
+                                <a href="#" class="streaming-server Button sgty">
+                                    <span class="nmopt">Not available</span>
+                                    <span>Nguồn Phát <span>Not available</span></span>
+                                </a>
+                                @endif
                             </li>
                         @endforeach
                     </ul>
