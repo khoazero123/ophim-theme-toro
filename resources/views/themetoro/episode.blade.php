@@ -299,8 +299,7 @@
                     mute: false,
                     autostart: true,
                     logo: {
-                        file: "{{ Setting::get('jwplayer_logo_file') }}",
-                        link: "{{ Setting::get('jwplayer_logo_link') }}",
+                        file: "{{ Setting::get('jwplayer_logo_link') }}",
                         position: "{{ Setting::get('jwplayer_logo_position') }}",
                     },
                     advertising: {
