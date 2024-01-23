@@ -49,8 +49,14 @@ class ThemeToroServiceProvider extends ServiceProvider
                 }
                 return $data;
             });
-            
+
             $view->with('tops', $tops);
+        });
+        view()->composer('themes::themetoro.inc.footer', function ($view) {
+            $order_by = get_theme_option('footer_tags_order_by', 'views_week');
+            $limit = get_theme_option('footer_tags_limit', 50);
+            $tags = \App\Models\Tag::orderBy($order_by, 'desc')->limit($limit)->get();
+            $view->with('tags', $tags);
         });
 
         $this->bootSeoDefaults();
@@ -299,8 +305,22 @@ class ThemeToroServiceProvider extends ServiceProvider
                         'tab' => 'Custom JS'
                     ],
                     [
+                        'name' => 'footer_tags_limit',
+                        'label' => 'Tags limit',
+                        'type' => 'number',
+                        'value' => 50,
+                        'tab' => 'Footer'
+                    ],
+                    [
+                        'name' => 'footer_tags_order_by',
+                        'label' => 'Tags order by',
+                        'type' => 'text',
+                        'value' => 'views_week',
+                        'tab' => 'Footer'
+                    ],
+                    [
                         'name' => 'footer',
-                        'label' => 'Footer',
+                        'label' => 'Custom HTML',
                         'type' => 'textarea',
                         'value' => <<<EOT
                             <footer class="Footer">
@@ -312,7 +332,7 @@ class ThemeToroServiceProvider extends ServiceProvider
                                 </div>
                             </footer>
                         EOT,
-                        'tab' => 'Custom HTML'
+                        'tab' => 'Footer'
                     ],
                     [
                         'name' => 'ads_header',

@@ -23,7 +23,8 @@ class ThemeToroController
 
     public function index(Request $request)
     {
-        if ($request['search'] || $request['filter']) {
+        $keyword = $request->query('search');
+        if ($keyword || $request['filter']) {
             $data = Movie::when(!empty($request['filter']['category']), function ($movie) {
                 $movie->whereHas('categories', function ($categories) {
                     $categories->where('id', request('filter')['category']);
@@ -36,7 +37,7 @@ class ThemeToroController
                 $movie->where('publish_year', request('filter')['year']);
             })->when(!empty($request['filter']['type']), function ($movie) {
                 $movie->where('type', request('filter')['type']);
-            })->when(!empty($request['search']), function ($query) {
+            })->when(!empty($keyword), function ($query) {
                 $query->where(function ($query) {
                     $query->where('name', 'like', '%' . request('search') . '%')
                         ->orWhere('origin_name', 'like', '%' . request('search')  . '%');
@@ -56,12 +57,22 @@ class ThemeToroController
                 }
             })->paginate(get_theme_option('per_page_limit'));
 
-            $this->generateSeoTags();
+            $this->generateSeoTags('search');
+
+            if ($data->count()) {
+                $tag = Tag::firstOrCreate(['name' => $keyword]);
+                $tag->where('id', $tag->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+            }
+
+            $section_name = "Tìm kiếm phim: $keyword";
+            if (($page = request()->query('page')) > 1) {
+                $section_name .= " - trang " . $page;
+            }
 
             return view('themes::themetoro.catalog', [
                 'movies' => $data,
-                'search' => $request['search'],
-                'section_name' => "Tìm kiếm phim: $request->search"
+                'search' => $keyword,
+                'section_name' => $section_name
             ]);
         }
 
@@ -83,7 +94,7 @@ class ThemeToroController
             }
             return $data;
         });
-    
+
         $home_page_slider_thumb = Cache::remember('site.movies.home_page_slider_thumb', setting('site_cache_ttl', 5 * 60), function () {
             $list = get_theme_option('home_page_slider_thumb') ?: [];
             if(empty($list)) return null;
@@ -100,7 +111,7 @@ class ThemeToroController
             }
             return $data;
         });
-    
+
         $data = Cache::remember('site.movies.latest', setting('site_cache_ttl', 5 * 60), function () {
             $lists = get_theme_option('latest');
             $data = [];
@@ -288,8 +299,8 @@ class ThemeToroController
 
         $cache_key = 'catalog:' . $catalog->id . ':page:' . $page;
         $movies = Cache::get($cache_key);
-        if(is_null($movies)) {
-            $movies = $catalog->movies()->paginate(20);
+        if(is_null($movies) || !(int)setting('site_cache_enable', 1)) {
+            $movies = $catalog->movies()->paginate(get_theme_option('per_page_limit', 15));
             if ($movies->total()) {
                 Cache::put($cache_key, $movies, setting('site_cache_ttl', 5 * 60));
             } else {
