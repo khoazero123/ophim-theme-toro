@@ -153,9 +153,9 @@
         <div class="Top AAIco-star_border">
             <h3 class="Title">Có thể bạn muốn xem?</h3>
         </div>
-        <div class="MovieListTop owl-carousel">
-            @foreach($movie_related as $movie)
-                <div class="TPostMv">
+        <div class="MovieListTop owl-carousel" data-total-item="{{count($movie_related)}}" data-per-row="{{get_theme_option('movie_related_per_row', 5)}}" data-max-row="{{get_theme_option('movie_related_max_row', 2)}}">
+            @foreach($movie_related as $i => $movie)
+                <div class="TPostMv slide" data-slide-index="{{$i}}">
                     <div class="TPost B">
                         <a href="{{$movie->getUrl()}}">
                             <div class="Image">
@@ -172,6 +172,15 @@
                 </div>
             @endforeach
         </div>
+
+        <style>
+            .slide {
+                font-size: 50px;
+                text-align: center;
+                border: 1px solid black;
+                margin-bottom: 20px;
+            }
+        </style>
     </section>
 @endsection
 
@@ -198,12 +207,10 @@
     <script>
         var rated = false;
         $('#movies-rating-star').raty({
-            score: {{ $currentMovie->getRatingStar() }},
+            score: "{{ $currentMovie->getRatingStar() }}",
             number: 10,
             numberMax: 10,
-            hints: ['quá tệ', 'tệ', 'không hay', 'không hay lắm', 'bình thường', 'xem được', 'có vẻ hay', 'hay',
-                'rất hay', 'siêu phẩm'
-            ],
+            hints: ['quá tệ', 'tệ', 'không hay', 'không hay lắm', 'bình thường', 'xem được', 'có vẻ hay', 'hay', 'rất hay', 'siêu phẩm'],
             starOff: '/themes/toro/plugins/jquery-raty/images/star-off.png',
             starOn: '/themes/toro/plugins/jquery-raty/images/star-on.png',
             starHalf: '/themes/toro/plugins/jquery-raty/images/star-half.png',

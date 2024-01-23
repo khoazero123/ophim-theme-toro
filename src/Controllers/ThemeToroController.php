@@ -149,7 +149,7 @@ class ThemeToroController
 
         $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key, []);
-        if(is_null($movie_related) && $movie->categories->count() > 0) {
+        if(empty($movie_related) && $movie->categories->count() > 0) {
             $movie_related = $movie->categories[0]->movies()->inRandomOrder()->limit(get_theme_option('movie_related_limit', 10))->get();
             Cache::put($movie_related_cache_key, $movie_related, setting('site_cache_ttl', 5 * 60));
         }

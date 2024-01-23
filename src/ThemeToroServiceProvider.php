@@ -84,7 +84,7 @@ class ThemeToroServiceProvider extends ServiceProvider
                         'type' => 'number',
                         'value' => 40,
                         'wrapperAttributes' => [
-                            'class' => 'form-group col-md-6',
+                            'class' => 'form-group col-md-2',
                         ],
                         'tab' => 'List'
                     ],
@@ -94,7 +94,27 @@ class ThemeToroServiceProvider extends ServiceProvider
                         'type' => 'number',
                         'value' => 16,
                         'wrapperAttributes' => [
-                            'class' => 'form-group col-md-6',
+                            'class' => 'form-group col-md-2',
+                        ],
+                        'tab' => 'List'
+                    ],
+                    [
+                        'name' => 'movie_related_per_row',
+                        'label' => 'Movies related per row',
+                        'type' => 'number',
+                        'value' => 5,
+                        'wrapperAttributes' => [
+                            'class' => 'form-group col-md-2',
+                        ],
+                        'tab' => 'List'
+                    ],
+                    [
+                        'name' => 'movie_related_max_row',
+                        'label' => 'Movies related max row',
+                        'type' => 'number',
+                        'value' => 2,
+                        'wrapperAttributes' => [
+                            'class' => 'form-group col-md-2',
                         ],
                         'tab' => 'List'
                     ],
