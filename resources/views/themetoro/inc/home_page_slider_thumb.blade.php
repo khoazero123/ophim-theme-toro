@@ -2,7 +2,7 @@
     <div class="Top AAIco-star_border">
         <h1 class="Title">{{$home_page_slider_thumb['label']}}</h1>
     </div>
-    <div class="MovieListTop owl-carousel">
+    <div class="home_page_slider_thumb MovieListTop owl-carousel">
         @foreach($home_page_slider_thumb['data'] as $movie)
             <div class="TPostMv">
                 <div class="TPost B">

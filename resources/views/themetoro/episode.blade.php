@@ -163,7 +163,7 @@
         <div class="Top AAIco-star_border">
             <h3 class="Title">Có thể bạn muốn xem?</h3>
         </div>
-        <div class="MovieListTop owl-carousel">
+        <div class="episode-blade MovieListTop owl-carousel" data-total-item="{{count($movie_related)}}" data-per-row="{{get_theme_option('movie_related_per_row', 5)}}" data-max-row="{{get_theme_option('movie_related_max_row', 2)}}">
             @foreach($movie_related as $movie)
                 <div class="TPostMv">
                     <div class="TPost B">
@@ -182,6 +182,14 @@
                 </div>
             @endforeach
         </div>
+        <style>
+            .slide {
+                font-size: 50px;
+                text-align: center;
+                border: 1px solid black;
+                margin-bottom: 20px;
+            }
+        </style>
     </section>
 
 @endsection
