@@ -344,11 +344,26 @@ jQuery(document).ready(function($) {
         rtl: (document.dir == 'rtl') ? true : false
     });
 
+    $('.MovieListTop').owlCarousel({
+        margin: 10,
+        lazyLoad: true,
+        responsive: {
+          0: { items: 2 },
+          360: { items: 3 },
+          560: { items: 4 },
+          760: { items: 6 },
+          960: { items: 8 },
+          1360: { items: 10 },
+          1600: { items: 12 }
+        },
+        rtl: document.dir == 'rtl' ? true : false
+    });
+
     (function() {
-        var el = $('.MovieListTop.owl-carousel');
+        var el = $('.MovieListRelated.owl-carousel');
         var totalItem = el.data('total-item');
-        var perRow = el.data('per-row');
-        var maxRow = el.data('max-row');
+        var perRow = el.data('per-row') || 8;
+        var maxRow = el.data('max-row') || 1;
         var totalRow = Math.ceil(totalItem / perRow);
         totalRow = totalRow > maxRow ? maxRow : totalRow;
 
