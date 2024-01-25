@@ -62,6 +62,11 @@
                                    return '<a href="'.$category->getUrl().'">'.$category->name.'</a>';
                             })->implode(', ') !!}
                         </p>
+                        <p class="Genre"><span>Tag:</span>
+                            {!! $currentMovie->tags->map(function ($tag) {
+                                   return '<a href="'.$tag->getUrl().'">'.$tag->name.'</a>';
+                            })->implode(', ') !!}
+                        </p>
                         <p class="Cast">
                             <span>Diễn viên:</span>
                             {!! $currentMovie->actors->map(function ($actor) {
