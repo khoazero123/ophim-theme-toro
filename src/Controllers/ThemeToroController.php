@@ -2,10 +2,11 @@
 
 namespace Ophim\ThemeToro\Controllers;
 
-use Backpack\Settings\app\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Backpack\Settings\app\Models\Setting;
 use App\Traits\HasSeoTags;
 use App\Models\Actor;
 use App\Models\Catalog;
@@ -111,8 +112,8 @@ class ThemeToroController
             }
             return $data;
         });
-
-        $data = Cache::remember('site.movies.latest', setting('site_cache_ttl', 5 * 60), function () {
+        $cached_key = 'site.movies.latest_'.Str::slug(http_build_query($request->query()));
+        $movies_latest = Cache::remember($cached_key, setting('site_cache_ttl', 5 * 60), function () {
             $lists = get_theme_option('latest');
             $data = [];
             foreach ($lists as $list) {
@@ -131,8 +132,7 @@ class ThemeToroController
             return $data;
         });
 
-
-        return view('themes::themetoro.index', compact('data', 'title', 'home_page_slider_poster', 'home_page_slider_thumb'));
+        return view('themes::themetoro.index', compact('title', 'movies_latest', 'home_page_slider_poster', 'home_page_slider_thumb'));
     }
 
     public function getMovieOverview(Request $request)

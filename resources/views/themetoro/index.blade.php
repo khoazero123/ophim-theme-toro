@@ -13,8 +13,11 @@
 @endsection
 
 @section('content')
-    @foreach($data as $item)
+    @foreach($movies_latest as $item)
         @include("themes::themetoro.inc.section." . $item["show_template"])
+        @if ($item['data']->hasPages() && $item['data']->lastPage() > 1)
+        {{ $item['data']->links('themes::themetoro.inc.pagination') }}
+        @endif
     @endforeach
 @endsection
 
