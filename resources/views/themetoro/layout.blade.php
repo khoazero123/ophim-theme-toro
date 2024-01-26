@@ -1,9 +1,9 @@
 @extends('themes.layout')
 
 @push('header')
-    <link rel='stylesheet' id='global-styles-inline-css' href='{{asset('themes/toro/css/global-styles.css')}}?ver=1.0.0' type='text/css'/>
-    <link rel='stylesheet' id='TOROFLIX_Theme-css' href='{{asset('themes/toro/css/toroflix-public.css')}}?ver=1.0.0' type='text/css' media='all'/>
-    <link rel='stylesheet' id='tp_style_css' href='{{asset('themes/toro/css/tp_style.css')}}?ver=1.0.0' type='text/css' media='all'/>
+    <link rel="stylesheet" id="global-styles-inline-css" href="{{asset('themes/toro/css/global-styles.css')}}?ver={{$theme_version}}" type="text/css"/>
+    <link rel="stylesheet" id="TOROFLIX_Theme-css" href="{{asset('themes/toro/css/toroflix-public.css')}}?ver={{$theme_version}}" type="text/css" media="all"/>
+    <link rel="stylesheet" id="tp_style_css" href="{{asset('themes/toro/css/tp_style.css')}}?ver={{$theme_version}}" type="text/css" media="all"/>
 @endpush
 
 @section('body')
@@ -41,19 +41,19 @@
     @endif
 
     <link rel="stylesheet" id="font-awesome-public_css-css"
-          href="{{asset('themes/toro/css/font-awesome.css')}}?ver=1.0.0"
+          href="{{asset('themes/toro/css/font-awesome.css')}}?ver={{$theme_version}}"
           type="text/css" media="all"/>
     <link rel="stylesheet" id="material-public-css-css"
-          href="{{asset('themes/toro/css/material.css')}}?ver=1.0.0"
+          href="{{asset('themes/toro/css/material.css')}}?ver={{$theme_version}}"
           type="text/css" media="all"/>
     <link rel="stylesheet" id="font-source-sans-pro-public-css-css"
           href='https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A300%2C400%2C600%2C700&#038;ver=1.0.0'
           type="text/css" media="all"/>
     <script type="text/javascript"
-            src="{{asset('themes/toro/js/jquery.js')}}?ver=3.0.0"
+            src="{{asset('themes/toro/js/jquery.js')}}?ver={{$theme_version}}"
             id="funciones_public_jquery-js"></script>
     <script type="text/javascript"
-            src="{{asset('themes/toro/js/owl.carousel.min.js')}}?ver=1.0.0"
+            src="{{asset('themes/toro/js/owl.carousel.min.js')}}?ver={{$theme_version}}"
             id="funciones_public_carousel-js"></script>
 
     <script type="text/javascript" id="funciones_public_sol-js-extra">
@@ -61,10 +61,10 @@
     </script>
 
     <script type="text/javascript"
-            src="{{asset('themes/toro/js/sol.js')}}?ver=1.0.0"
+            src="{{asset('themes/toro/js/sol.js')}}?ver={{$theme_version}}"
             id="funciones_public_sol-js"></script>
     <script type="text/javascript"
-            src="{{asset('themes/toro/js/functions.js')}}?ver=1.0.0"
+            src="{{asset('themes/toro/js/functions.js')}}?ver={{$theme_version}}"
             id="funciones_public_functions-js"></script>
 
     {!! setting('site_scripts_google_analytics') !!}

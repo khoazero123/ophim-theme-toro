@@ -15,6 +15,14 @@ class ThemeToroServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        view()->composer('themes::themetoro.layout', function ($view) {
+            $composer_file = __DIR__ . '/../composer.json';
+            $version = '1.0.0';
+            if (file_exists($composer_file) && ($composer = json_decode(file_get_contents($composer_file), true))) {
+                $version = \Composer\InstalledVersions::getVersion($composer['name']);
+            }
+            $view->with('theme_version', $version);
+        });
         view()->composer('themes::themetoro.inc.header', function ($view) {
             $title = setting('site_homepage_title', config('app.name'));
             $logo = setting('site_logo', '');
