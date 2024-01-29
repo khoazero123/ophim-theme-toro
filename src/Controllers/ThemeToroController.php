@@ -157,6 +157,9 @@ class ThemeToroController
         $movie->increment('views_week', 1);
         $movie->increment('views_month', 1);
 
+        // $movie->load('episodes');
+        // $total_episodes = $movie->episodes->count();
+
         $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key, []);
         if(empty($movie_related) && $movie->categories->count() > 0) {

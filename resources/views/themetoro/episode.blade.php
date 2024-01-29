@@ -169,8 +169,8 @@
             <h3 class="Title">Có thể bạn muốn xem?</h3>
         </div>
         <div class="episode-blade MovieListRelated owl-carousel" data-total-item="{{count($movie_related)}}" data-per-row="{{get_theme_option('movie_related_per_row', 5)}}" data-max-row="{{get_theme_option('movie_related_max_row', 2)}}">
-            @foreach($movie_related as $movie)
-                <div class="TPostMv">
+            @foreach($movie_related as $i => $movie)
+                <div class="TPostMv slide" data-slide-index="{{$i}}">
                     <div class="TPost B">
                         <a href="{{$movie->getUrl()}}">
                             <div class="Image">

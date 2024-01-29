@@ -2,16 +2,8 @@
 
 @php
     $watch_url = '';
-    if (!$currentMovie->is_copyright && count($currentMovie->episodes) && $currentMovie->episodes[0]['link'] != '') {
-        $watch_url = $currentMovie->episodes
-            ->sortBy([['server', 'asc']])
-            ->groupBy('server')
-            ->first()
-            ->sortByDesc('name', SORT_NATURAL)
-            ->groupBy('name')
-            ->last()
-            ->sortByDesc('type')
-            ->first()
+    if (!$currentMovie->is_copyright && count($currentMovie->episodes) && $currentMovie->getFirstEpisode()) {
+        $watch_url = $currentMovie->getFirstEpisode()
             ->getUrl();
     }
 @endphp
