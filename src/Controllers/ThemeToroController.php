@@ -132,6 +132,16 @@ class ThemeToroController
             return $data;
         });
 
+        $page = $this->getPageQueryOnHomePage($request);
+        if ($page) {
+            // Append page to title
+            // $title = config('seotools.meta.defaults.title');
+            $title .= " - trang $page";
+            config([
+                'seotools.meta.defaults.title' => $title,
+            ]);
+        }
+
         return view('themes::themetoro.index', compact('title', 'movies_latest', 'home_page_slider_poster', 'home_page_slider_thumb'));
     }
 
@@ -340,5 +350,17 @@ class ThemeToroController
         ]);
 
         return response([], 204);
+    }
+
+    protected function getPageQueryOnHomePage(Request $request) {
+        $lists = get_theme_option('latest');
+        foreach ($lists as $list) {
+            $key = Str::slug($list['label']);
+            if($page = (int)$request->query($key)) {
+                return $page;
+            }
+        }
+
+        return 0;
     }
 }
