@@ -374,9 +374,11 @@ jQuery(document).ready(function($) {
           responsive: {
             0: {
               items: 2,
+              rows: totalRow
             },
             768: {
               items: 4,
+              rows: totalRow
             },
             991: {
               items: perRow,
@@ -675,29 +677,6 @@ jQuery(document).ready(function($) {
                 error: function() {}
             });
             console.log(stars);
-        }
-    });
-});
-$(document).on('click', '#scrapper', function(event) {
-    event.preventDefault();
-    console.log(toroflixPublic.url);
-    $.ajax({
-        url: 'https://torothemes.com/demo/toroflix/wp-admin/admin-ajax.php',
-        method: 'POST',
-        data: {
-            action: 'action_player_change',
-            id: 156,
-            key: 0,
-            typ: 'movie'
-        },
-        beforeSend: function() {
-            console.log('cargando');
-        },
-        success: function(data) {
-            console.log(data);
-        },
-        error: function() {
-            console.log('error');
         }
     });
 });
