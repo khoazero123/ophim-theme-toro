@@ -45,6 +45,8 @@ class ThemeToroServiceProvider extends ServiceProvider
                 $data = [];
                 foreach ($lists as $list) {
                     try {
+                        if (!isset($list['label']) || empty($list['label']))
+                            continue;
                         $movies = query_movies($list);
                         $data[] = [
                             'label' => $list['label'],

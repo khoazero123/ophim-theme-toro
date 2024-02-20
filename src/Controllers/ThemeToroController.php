@@ -85,6 +85,8 @@ class ThemeToroController
             $data = null;
             $list = $list[0];
             try {
+                if (!isset($list['label']) || empty($list['label']))
+                    return null;
                 $movies = query_movies($list);
                 $data = [
                     'label' => $list['label'],
@@ -102,6 +104,8 @@ class ThemeToroController
             $data = null;
             $list = $list[0];
             try {
+                if (!isset($list['label']) || empty($list['label']))
+                    return null;
                 $movies = query_movies($list);
                 $data = [
                     'label' => $list['label'],
@@ -118,6 +122,8 @@ class ThemeToroController
             $data = [];
             foreach ($lists as $list) {
                 try {
+                    if (!isset($list['label']) || empty($list['label']))
+                        continue;
                     $movies = query_movies($list);
                     $data[] = [
                         'label' => $list['label'],
@@ -345,8 +351,11 @@ class ThemeToroController
 
     public function rateMovie(Request $request, $movie)
     {
-
         $movie = Movie::fromCache()->find($movie);
+
+        if (!$movie) {
+            return response([], 404);
+        }
 
         $movie->refresh()->increment('rating_count', 1, [
             'rating_star' => $movie->rating_star +  ((int) request('rating') - $movie->rating_star) / ($movie->rating_count + 1)
