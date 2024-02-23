@@ -38,10 +38,11 @@ class ThemeToroController
                 $movie->where('publish_year', request('filter')['year']);
             })->when(!empty($request['filter']['type']), function ($movie) {
                 $movie->where('type', request('filter')['type']);
-            })->when(!empty($keyword), function ($query) {
-                $query->where(function ($query) {
-                    $query->where('name', 'like', '%' . request('search') . '%')
-                        ->orWhere('origin_name', 'like', '%' . request('search')  . '%');
+            })->when(!empty($keyword), function ($query) use ($keyword) {
+                $query->where(function ($query) use ($keyword) {
+                    $query->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('origin_name', 'like', '%' . $keyword  . '%')
+                        ->orWhere('ascii_name', 'like', '%' . $keyword  . '%');
                 })->orderBy('name', 'desc');
             })->when(!empty($request['filter']['sort']), function ($movie) {
                 if (request('filter')['sort'] == 'create') {

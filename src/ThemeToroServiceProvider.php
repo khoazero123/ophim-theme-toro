@@ -5,6 +5,7 @@ namespace Ophim\ThemeToro;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ThemeToroServiceProvider extends ServiceProvider
 {
@@ -389,6 +390,11 @@ class ThemeToroServiceProvider extends ServiceProvider
 
     protected function bootSeoDefaults()
     {
+        /** @var \League\Flysystem\Local\LocalFilesystemAdapter|\Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk('images');
+        $site_meta_image = setting('site_meta_image');
+        $site_meta_image = $site_meta_image ? $disk->url(setting('site_meta_image')) : null;
+
         config([
             'seotools.meta.defaults.title' => setting('site_homepage_title'),
             'seotools.meta.defaults.description' => setting('site_meta_description'),
@@ -402,7 +408,7 @@ class ThemeToroServiceProvider extends ServiceProvider
             'seotools.opengraph.defaults.type' => 'website',
             'seotools.opengraph.defaults.url' => url("/"),
             'seotools.opengraph.defaults.site_name' => setting('site_meta_siteName'),
-            'seotools.opengraph.defaults.images' => [setting('site_meta_image')],
+            'seotools.opengraph.defaults.images' => $site_meta_image ? [$site_meta_image] : [],
         ]);
 
         config([
@@ -411,14 +417,14 @@ class ThemeToroServiceProvider extends ServiceProvider
             'seotools.twitter.defaults.description' => setting('site_meta_description'),
             'seotools.twitter.defaults.url' => url("/"),
             'seotools.twitter.defaults.site' => setting('site_meta_siteName'),
-            'seotools.twitter.defaults.image' => setting('site_meta_image'),
+            'seotools.twitter.defaults.image' => $site_meta_image ? $site_meta_image : [],
         ]);
 
         config([
             'seotools.json-ld.defaults.title' => setting('site_homepage_title'),
             'seotools.json-ld.defaults.type' => 'WebPage',
             'seotools.json-ld.defaults.description' => setting('site_meta_description'),
-            'seotools.json-ld.defaults.images' => setting('site_meta_image'),
+            'seotools.json-ld.defaults.images' => $site_meta_image ? [$site_meta_image] : [],
         ]);
     }
 }

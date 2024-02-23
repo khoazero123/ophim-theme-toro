@@ -4,7 +4,7 @@
     </div>
     <div class="search-history" style="text-align: center;">
         @foreach($tags as $tag)
-            <a href="{{route('tags.movies.index', $tag->slug)}}"><span class="">{{$tag->name}}</span></a>
+            <a href="{{$tag->getUrl()}}"><span class="">{{$tag->name}}</span></a>
         @endforeach
     </div>
 </div>
