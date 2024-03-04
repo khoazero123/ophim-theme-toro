@@ -28,6 +28,10 @@ Route::group([
         ->where(['tag' => '.+', 'id' => '[0-9]+'])
         ->name('tags.movies.index');
 
+    Route::get(setting('site_routes_tag_search', '/?search={tag}'), [ThemeToroController::class, 'getMovieOfTag'])
+        ->where(['tag' => '.+', 'id' => '[0-9]+'])
+        ->name('tags.movies.search');
+
     Route::get(setting('site_routes_types', '/danh-sach/{type}'), [ThemeToroController::class, 'getMovieOfType'])
         ->where(['type' => '.+', 'id' => '[0-9]+'])
         ->name('types.movies.index');

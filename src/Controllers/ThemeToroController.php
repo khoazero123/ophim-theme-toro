@@ -24,7 +24,14 @@ class ThemeToroController
 
     public function index(Request $request)
     {
-        $keyword = $request->query('search');
+        $site_routes_tag_search = setting('site_routes_tag_search', '/?search={tag}');
+        $query_str = parse_url($site_routes_tag_search, PHP_URL_QUERY);
+        parse_str($query_str, $output);
+        $query_key = !empty($output) ? array_keys($output)[0] : 'search';
+        $keyword = $request->query($query_key);
+        if ($keyword) {
+            $keyword = str_replace(['-', '_'], ' ', $keyword);
+        }
         if ($keyword || $request['filter']) {
             $data = Movie::when(!empty($request['filter']['category']), function ($movie) {
                 $movie->whereHas('categories', function ($categories) {
@@ -42,7 +49,8 @@ class ThemeToroController
                 $query->where(function ($query) use ($keyword) {
                     $query->where('name', 'like', '%' . $keyword . '%')
                         ->orWhere('origin_name', 'like', '%' . $keyword  . '%')
-                        ->orWhere('ascii_name', 'like', '%' . $keyword  . '%');
+                        ->orWhere('ascii_name', 'like', '%' . $keyword  . '%')
+                        ->orWhere('content', 'like', '%' . $keyword  . '%');
                 })->orderBy('name', 'desc');
             })->when(!empty($request['filter']['sort']), function ($movie) {
                 if (request('filter')['sort'] == 'create') {
