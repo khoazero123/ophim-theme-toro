@@ -191,10 +191,11 @@ class ThemeToroController
 
     public function getEpisode(Request $request)
     {
-        $movie = Movie::fromCache()->findByKey('slug', $request->movie)->load('episodes');
+        $movie = Movie::fromCache()->findByKey('slug', $request->movie);
         if (is_null($movie)) abort(404);
         /** @var Episode */
         $episode_id = $request->id;
+        $movie->load('episodes');
         $episode = $movie->episodes->when($episode_id, function ($collection, $episode_id) {
             return $collection->where('id', $episode_id);
         })->firstWhere('slug', $request->episode);
