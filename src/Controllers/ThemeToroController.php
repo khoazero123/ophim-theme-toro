@@ -200,6 +200,8 @@ class ThemeToroController
             return $collection->where('id', $episode_id);
         })->firstWhere('slug', $request->episode);
 
+        if (is_null($episode)) abort(404);
+
         $server_episodes = $movie->episodes()->where('slug', $episode->slug)->get();
 
         $episode->generateSeoTags();
@@ -208,6 +210,13 @@ class ThemeToroController
         $movie->increment('views_day', 1);
         $movie->increment('views_week', 1);
         $movie->increment('views_month', 1);
+        
+        if ($video = $episode->video) {
+            $video->increment('views', 1);
+            $video->increment('views_day', 1);
+            $video->increment('views_week', 1);
+            $video->increment('views_month', 1);
+        }
 
         $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key) ?: [];
