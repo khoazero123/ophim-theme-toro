@@ -109,7 +109,7 @@
                     })->implode(' ') !!}
                 </div>
                 <div class="Description">
-                    <p>{!! strip_tags($currentMovie->content) !!}</p>
+                    <p>{!! $currentMovie->content !!}</p>
                     <p class="Director">
                         <span>Đạo diễn:</span>
                         {!! $currentMovie->directors->map(function ($director) {
