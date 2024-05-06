@@ -200,12 +200,7 @@
 @endsection
 
 @push('scripts')
-    <script src="/themes/toro/player/js/p2p-media-loader-core.min.js"></script>
-    <script src="/themes/toro/player/js/p2p-media-loader-hlsjs.min.js"></script>
-
-    <script src="/themes/toro/js/jwplayer-8.9.3.js"></script>
-    <script src="/themes/toro/js/hls.min.js"></script>
-    <script src="/themes/toro/js/jwplayer.hlsjs.min.js"></script>
+    <script src="/player/v/8.18.4/jwplayer.js"></script>
 
     <script>
         var episode_id = '{{$episode->id}}';
@@ -325,50 +320,7 @@
                     }
                 };
 
-                if (type == 'm3u8') {
-                    const segments_in_queue = 50;
-
-                    var engine_config = {
-                        debug: !1,
-                        segments: {
-                            forwardSegmentCount: 50,
-                        },
-                        loader: {
-                            cachedSegmentExpiration: 864e5,
-                            cachedSegmentsCount: 1e3,
-                            requiredSegmentsPriority: segments_in_queue,
-                            httpDownloadMaxPriority: 9,
-                            httpDownloadProbability: 0.06,
-                            httpDownloadProbabilityInterval: 1e3,
-                            httpDownloadProbabilitySkipIfNoPeers: !0,
-                            p2pDownloadMaxPriority: 50,
-                            httpFailedSegmentTimeout: 500,
-                            simultaneousP2PDownloads: 20,
-                            simultaneousHttpDownloads: 2,
-                            // httpDownloadInitialTimeout: 12e4,
-                            // httpDownloadInitialTimeoutPerSegment: 17e3,
-                            httpDownloadInitialTimeout: 0,
-                            httpDownloadInitialTimeoutPerSegment: 17e3,
-                            httpUseRanges: !0,
-                            maxBufferLength: 300,
-                            // useP2P: false,
-                        },
-                    };
-                    if (Hls.isSupported() && p2pml.hlsjs.Engine.isSupported()) {
-                        var engine = new p2pml.hlsjs.Engine(engine_config);
-                        player.setup(objSetup);
-                        jwplayer_hls_provider.attach();
-                        p2pml.hlsjs.initJwPlayer(player, {
-                            liveSyncDurationCount: segments_in_queue, // To have at least 7 segments in queue
-                            maxBufferLength: 300,
-                            loader: engine.createLoaderClass(),
-                        });
-                    } else {
-                        player.setup(objSetup);
-                    }
-                } else {
-                    player.setup(objSetup);
-                }
+                player.setup(objSetup);
 
                 const resumeData = 'OPCMS-PlayerPosition-' + id;
 
