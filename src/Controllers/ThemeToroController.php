@@ -16,7 +16,7 @@ use App\Models\Episode;
 use App\Models\Movie;
 use App\Models\Region;
 use App\Models\Tag;
-
+use Illuminate\Support\Facades\Cookie;
 
 class ThemeToroController
 {
@@ -191,33 +191,38 @@ class ThemeToroController
 
     public function getEpisode(Request $request)
     {
+        $episode_slug = $request->episode;
         $movie = Movie::fromCache()->findByKey('slug', $request->movie);
         if (is_null($movie)) abort(404);
         /** @var Episode */
         $episode_id = $request->id;
-        $movie->load('episodes');
         $episode = $movie->episodes->when($episode_id, function ($collection, $episode_id) {
             return $collection->where('id', $episode_id);
-        })->firstWhere('slug', $request->episode);
+        })->firstWhere('slug', $episode_slug);
 
         if (is_null($episode)) abort(404);
 
-        $server_episodes = $movie->episodes()->where('slug', $episode->slug)->get();
+        // Not nessary yet
+        // $server_episodes = $movie->episodes()->where('slug', $episode->slug)->get();
+        $server_episodes = [$episode];
 
         $episode->generateSeoTags();
 
-        $movie->increment('views', 1);
-        $movie->increment('views_day', 1);
-        $movie->increment('views_week', 1);
-        $movie->increment('views_month', 1);
-        
-        if ($video = $episode->video) {
-            $video->increment('views', 1);
-            $video->increment('views_day', 1);
-            $video->increment('views_week', 1);
-            $video->increment('views_month', 1);
+        $is_view_set = $request->cookie('views_episode_'.$episode_id);
+        if (!$is_view_set) {
+            $movie->increment('views', 1);
+            $movie->increment('views_day', 1);
+            $movie->increment('views_week', 1);
+            $movie->increment('views_month', 1);
+            
+            if ($video = $episode->video) {
+                $video->increment('views', 1);
+                $video->increment('views_day', 1);
+                $video->increment('views_week', 1);
+                $video->increment('views_month', 1);
+            }
+            Cookie::queue(Cookie::make('views_episode_'.$episode_id, '1', 60));
         }
-
         $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key) ?: [];
         if(empty($movie_related) && count($movie->categories)) {

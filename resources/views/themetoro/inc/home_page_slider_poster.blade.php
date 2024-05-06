@@ -31,44 +31,13 @@
                                     {!! mb_substr(strip_tags($movie->content),0,160, "utf-8") !!}...
                                 </p>
                                 <p class="Director"><span>Đạo diễn:</span>
-                                    @if(count($movie->directors))
-                                        {!! $movie->directors->map(function ($director) {
-                                                   return '<a href="' .
-                                                       $director->getUrl() .
-                                                       '" tite="Đạo diễn ' .
-                                                       $director->name .
-                                                       '">' .
-                                                       $director->name .
-                                                       '</a>';
-                                               })->implode(', ') !!}
-                                    @endif
+                                {!! $movie->renderDirectorsListHtml() !!}
                                 </p>
                                 <p class="Genre"><span>Thể loại:</span>
-                                    @if(count($movie->categories))
-                                        {!! $movie->categories->map(function ($category) {
-                                                   return '<a href="' .
-                                                       $category->getUrl() .
-                                                       '" tite="Thể loại ' .
-                                                       $category->name .
-                                                       '">' .
-                                                       $category->name .
-                                                       '</a>';
-                                               })->implode(', ') !!}
-                                    @endif
+                                {!! $movie->renderCategoriesListHtml() !!}
                                 </p>
                                 <p class="Cast"><span>Diễn viên:</span>
-                                    @if(count($movie->actors))
-                                        {!! $movie->actors->take(3)->map(function ($actor) {
-                                                   return '<a href="' .
-                                                       $actor->getUrl() .
-                                                       '" tite="Diễn viên ' .
-                                                       $actor->name .
-                                                       '">' .
-                                                       $actor->name .
-                                                       '</a>';
-                                               })->implode(', ') !!}
-                                        ...
-                                    @endif
+                                {!! $movie->renderActorsListHtml() !!}
                                 </p>
                             </div>
                             <a href="{{$movie->getUrl()}}"

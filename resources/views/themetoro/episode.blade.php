@@ -104,33 +104,25 @@
                         </span>
                     <span class="Time">{{$currentMovie->episode_time}}</span>
                     <span class="Views AAIco-remove_red_eye">{{$currentMovie->views}}</span>
-                    {!! $currentMovie->regions->map(function ($region) {
-                           return '<span class="Qlty"><a href="'.$region->getUrl().'">'.$region->name.'</a></span>';
-                    })->implode(' ') !!}
+                    {!! $currentMovie->renderRegionsListHtml() !!}
                 </div>
                 <div class="Description">
                     <p>{!! $currentMovie->content !!}</p>
                     <p class="Director">
                         <span>Đạo diễn:</span>
-                        {!! $currentMovie->directors->map(function ($director) {
-                               return '<span class="tt-at"><a href="'.$director->getUrl().'">'.$director->name.'</a></span>';
-                        })->implode(',') !!}
+                        {!! $currentMovie->renderDirectorsListHtml() !!}
                     </p>
-                    <p class="Genre"><span>Thể loại:</span>
-                        {!! $currentMovie->categories->map(function ($category) {
-                               return '<a href="'.$category->getUrl().'">'.$category->name.'</a>';
-                        })->implode(', ') !!}
+                    <p class="Genre">
+                        <span>Thể loại:</span>
+                        {!! $currentMovie->renderCategoriesListHtml() !!}
                     </p>
-                    <p class="Genre"><span>Tag:</span>
-                            {!! $currentMovie->tags->map(function ($tag) {
-                                   return '<a href="'.$tag->getUrl().'">'.$tag->name.'</a>';
-                            })->implode(', ') !!}
-                        </p>
+                    <p class="Genre">
+                        <span>Tag:</span>
+                        {!! $currentMovie->renderTagsListHtml() !!}
+                    </p>
                     <p class="Cast">
                         <span>Diễn viên:</span>
-                        {!! $currentMovie->actors->map(function ($actor) {
-                               return '<a href="'.$actor->getUrl().'">'.$actor->name.'</a>';
-                        })->implode('<span class="dot-sh">,</span> ') !!}
+                        {!! $currentMovie->renderActorsListHtml() !!}
                     </p>
                 </div>
                 @if ($currentMovie->trailer_url && strpos($currentMovie->trailer_url, 'youtube'))

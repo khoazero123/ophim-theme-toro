@@ -64,9 +64,12 @@ class ThemeToroServiceProvider extends ServiceProvider
             $view->with('tops', $tops);
         });
         view()->composer('themes::themetoro.inc.footer', function ($view) {
-            $order_by = get_theme_option('footer_tags_order_by', 'views_week');
-            $limit = get_theme_option('footer_tags_limit', 50);
-            $tags = \App\Models\Tag::orderBy($order_by, 'desc')->limit($limit)->get();
+            $tags = Cache::remember('site.footer.tags', setting('site_cache_ttl', 5 * 60), function () {
+                $order_by = get_theme_option('footer_tags_order_by', 'views_week');
+                $limit = get_theme_option('footer_tags_limit', 50);
+                $tags = \App\Models\Tag::orderBy($order_by, 'desc')->limit($limit)->get();
+                return $tags;
+            });
             $view->with('tags', $tags);
         });
 

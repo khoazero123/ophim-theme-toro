@@ -53,6 +53,6 @@ Route::group([
 
     Route::get(setting('site_routes_movie', '/phim/{movie}'), [ThemeToroController::class, 'getMovieOverview'])
         ->where(['movie' => '.+', 'id' => '[0-9]+'])
-        ->name('movies.show');
+        ->name('front-end.movies.show');
 
 });
