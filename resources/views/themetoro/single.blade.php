@@ -36,7 +36,9 @@
                             @endswitch
                         </span>
                         <span class="Time">{{$currentMovie->episode_time}}</span>
+                        @if ($currentMovie->views)
                         <span class="Views AAIco-remove_red_eye">{{$currentMovie->views}}</span>
+                        @endif
                         {!! $currentMovie->regions->map(function ($region) {
                                return '<span class="Qlty"><a href="'.$region->getUrl().'">'.$region->name.'</a></span>';
                         })->implode(' ') !!}

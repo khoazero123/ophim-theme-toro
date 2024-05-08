@@ -25,7 +25,9 @@
                 <span class="Qlty">{{$movie->quality}}</span>
                 <span class="Qlty">{{$movie->language}}</span>
                 <span class="Time">{{$movie->episode_time}}</span>
+                @if ($movie->views)
                 <span class="Views AAIco-remove_red_eye">{{$movie->views}}</span>
+                @endif
             </div>
             <div class="Description">
                 <p>{!! mb_substr(strip_tags($movie->content),0,100, "utf-8") !!}...</p>

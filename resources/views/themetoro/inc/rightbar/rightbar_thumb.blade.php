@@ -19,10 +19,10 @@
                     </a>
                     <div class="Info">
                         <div>
-                            <span class="TpTv BgA">
+                            <!-- <span class="TpTv BgA movie-language">
                                 {{$movie->language}}
-                            </span>
-                            <span class="TpTv BgA">
+                            </span> -->
+                            <span class="TpTv BgA movie-quality">
                                 {{$movie->quality}}
                             </span>
                         </div>
@@ -33,8 +33,11 @@
                                      alt="img"><span style="font-size: 12px;">{{$movie->getRatingStar()}}</span>
                             </div>
                         </div>
-                        <span class="Date">{{$movie->publish_year}}</span> <span class="Time">{{$movie->episode_time}}</span> <span
-                            class="Views AAIco-remove_red_eye">{{$movie->view_week}}</span></div>
+                        <span class="Date">{{$movie->publish_year}}</span> 
+                        <span class="Time">{{$movie->episode_time}}</span> 
+                        @if ($movie->views_week)
+                        <span class="Views AAIco-remove_red_eye">{{$movie->views_week}}</span></div>
+                        @endif
                 </div>
             </li>
         @endforeach

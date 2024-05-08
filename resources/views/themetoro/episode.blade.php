@@ -103,7 +103,9 @@
                         @endswitch
                         </span>
                     <span class="Time">{{$currentMovie->episode_time}}</span>
+                    @if ($currentMovie->views)
                     <span class="Views AAIco-remove_red_eye">{{$currentMovie->views}}</span>
+                    @endif
                     {!! $currentMovie->renderRegionsListHtml() !!}
                 </div>
                 <div class="Description">

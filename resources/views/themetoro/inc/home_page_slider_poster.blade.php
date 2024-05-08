@@ -23,8 +23,10 @@
                                         Phim bộ
                                     @endif
                                 </span>
-                                <span class="Time">{{$movie->episode_time}}</span> <span
-                                    class="Views AAIco-remove_red_eye">{{$movie->views}}</span>
+                                <span class="Time">{{$movie->episode_time}}</span> 
+                                @if ($movie->views)
+                                <span class="Views AAIco-remove_red_eye">{{$movie->views}}</span>
+                                @endif
                             </div>
                             <div class="Description">
                                 <p>
