@@ -206,20 +206,14 @@
             const link = el.dataset.link.replace(/^http:\/\//i, 'https://');
             const id = el.dataset.id;
 
-            const newUrl =
-                location.protocol +
-                "//" +
-                location.host +
-                location.pathname.replace(`-${episode_id}`, `-${id}`);
+            const newUrl = location.protocol + "//" + location.host + location.pathname.replace(`-${episode_id}`, `-${id}`);
 
-            history.pushState({
-                path: newUrl
-            }, "", newUrl);
+            history.pushState({ path: newUrl }, "", newUrl);
             episode_id = id;
 
             Array.from(document.getElementsByClassName('streaming-server')).forEach(server => {
                 server.classList.remove('on');
-            })
+            });
             el.classList.add('on');
             renderPlayer(type, link, id);
         }
@@ -242,7 +236,7 @@
                             tag: "{{ Setting::get('jwplayer_advertising_file') }}",
                             client: "vast",
                             vpaidmode: "insecure",
-                            skipoffset: "{{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}", // Bỏ qua quảng cáo trong vòng 5 giây
+                            skipoffset: "{{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}",
                             skipmessage: "Bỏ qua sau xx giây",
                             skiptext: "Bỏ qua"
                         }
@@ -287,16 +281,7 @@
                     file: link,
                     playbackRateControls: true,
                     playbackRates: [0.25, 0.75, 1, 1.25],
-                    sharing: {
-                        sites: [
-                            "reddit",
-                            "facebook",
-                            "twitter",
-                            "googleplus",
-                            "email",
-                            "linkedin",
-                        ],
-                    },
+                    sharing: { sites: ["reddit", "facebook", "twitter", "googleplus", "email", "linkedin", ]},
                     volume: 100,
                     mute: false,
                     autostart: true,
@@ -332,11 +317,10 @@
                             console.log("Position cookie found: " + localStorage[resumeData]);
                         }
                         player.once('play', function() {
-                            console.log('Checking position cookie!');
                             console.log(Math.abs(player.getDuration() - currentPosition));
-                            if (currentPosition > 180 && Math.abs(player.getDuration() - currentPosition) >
-                                5) {
-                                player.seek(currentPosition);
+                            if (currentPosition > 180 && Math.abs(player.getDuration() - currentPosition) > 5) {
+                                console.log('player.seek: ', currentPosition);
+                                // player.seek(currentPosition);
                             }
                         });
                         window.onunload = function() {
@@ -353,13 +337,7 @@
                     } else {
                         console.log('Your browser is too old!');
                     }
-                })
-
-                function formatSeconds(seconds) {
-                    var date = new Date(1970, 0, 1);
-                    date.setSeconds(seconds);
-                    return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
-                }
+                });
             }
         }
     </script>
