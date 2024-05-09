@@ -1,7 +1,6 @@
 @extends('themes::themetoro.layout')
 
 @push('header')
-
 @endpush
 
 @section('single_top')
