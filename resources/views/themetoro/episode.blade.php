@@ -1,11 +1,7 @@
 @extends('themes::themetoro.layout')
 
 @push('header')
-    <style>
-        .jwplayer {
-            position: unset !important;
-        }
-    </style>
+
 @endpush
 
 @section('single_top')
