@@ -269,17 +269,26 @@
             if (type == 'm3u8' || type == 'mp4') {
                 wrapper.innerHTML = `<div id="jwplayer"></div>`;
                 const player = jwplayer("jwplayer");
-                const objSetup = {
-                    key: "{{ Setting::get('jwplayer_license') }}",
-                    aspectratio: "16:9",
+
+                var jwplayer_key = "{{ Setting::get('jwplayer_license') }}";
+                var jwplayerOptions = JSON.parse(`{!! Setting::get('jwplayer_options') !!}`) || {};
+                if (jwplayer_key) {
+                    jwplayerOptions.key = jwplayer_key;
+                }
+                console.log({jwplayerOptions});
+                
+                const otherOptions = {
+                    // aspectratio: "16:9",
                     width: "100%",
+                    height: 720,
+                    responsive: true,
                     file: link,
                     playbackRateControls: true,
                     playbackRates: [0.25, 0.75, 1, 1.25],
                     sharing: { sites: ["reddit", "facebook", "twitter", "googleplus", "email", "linkedin", ]},
                     volume: 100,
                     mute: false,
-                    autostart: true,
+                    autostart: false,
                     logo: {
                         file: "{{ Setting::get('jwplayer_logo_link') }}",
                         position: "{{ Setting::get('jwplayer_logo_position') }}",
@@ -294,6 +303,8 @@
                     }
                 };
 
+                const objSetup = Object.assign({}, otherOptions, jwplayerOptions);
+                console.log({objSetup});
                 player.setup(objSetup);
 
                 const resumeData = 'OPCMS-PlayerPosition-' + id;
@@ -315,7 +326,7 @@
                             console.log(Math.abs(player.getDuration() - currentPosition));
                             if (currentPosition > 180 && Math.abs(player.getDuration() - currentPosition) > 5) {
                                 console.log('player.seek: ', currentPosition);
-                                // player.seek(currentPosition);
+                                player.seek(currentPosition);
                             }
                         });
                         window.onunload = function() {
