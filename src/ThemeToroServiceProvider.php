@@ -378,14 +378,41 @@ class ThemeToroServiceProvider extends ServiceProvider
                         'tab' => 'Ads'
                     ],
                     [
-                        'name' => 'ads_catfish',
-                        'label' => 'Ads catfish',
+                        'name' => 'ads_below_player',
+                        'label' => 'Ads below player',
                         'type' => 'textarea',
                         'value' => <<<EOT
 
                         EOT,
                         'tab' => 'Ads'
-                    ]
+                    ],
+                    [
+                        'name' => 'ads_below_comment',
+                        'label' => 'Ads below comment',
+                        'type' => 'textarea',
+                        'value' => <<<EOT
+
+                        EOT,
+                        'tab' => 'Ads'
+                    ],
+                    [
+                        'name' => 'ads_top_rightbar',
+                        'label' => 'Ads top rightbar',
+                        'type' => 'textarea',
+                        'value' => <<<EOT
+
+                        EOT,
+                        'tab' => 'Ads'
+                    ],
+                    [
+                        'name' => 'ads_footer',
+                        'label' => 'Ads footer',
+                        'type' => 'textarea',
+                        'value' => <<<EOT
+
+                        EOT,
+                        'tab' => 'Ads'
+                    ],
                 ],
             ]
         ])]);

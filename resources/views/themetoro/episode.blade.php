@@ -46,6 +46,13 @@
             </div>
         </div>
     </div>
+
+    @if ($ads_below_player = get_theme_option('ads_below_player'))
+    <div class="Main Container ads_below_player">
+        {!! $ads_below_player !!}
+    </div>
+    @endif
+
     <div class="Main Container">
         @foreach ($currentMovie->episodes->sortBy([['server', 'asc']])->groupBy('server') as $server => $data)
             <section class="SeasonBx AACrdn">
@@ -152,6 +159,14 @@
             </div>
         </ul>
     </section>
+
+    @if ($ads_below_comment = get_theme_option('ads_below_comment'))
+    <section>
+        <div class="ads_below_comment">
+            {!! $ads_below_comment !!}
+        </div>
+    </section>
+    @endif
 
     <section>
         <div class="Top AAIco-star_border">

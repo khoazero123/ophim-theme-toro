@@ -1,4 +1,10 @@
-<div id="widget_post_toroflix-2" class="Wdgt widget_postlist">
+@if ($ads_top_rightbar = get_theme_option('ads_top_rightbar'))
+<div id="widget_post_toroflix" class="Wdgt widget_ads_top_rightbar">
+    {!! $ads_top_rightbar !!}
+</div>
+@endif
+
+<div id="widget_post_toroflix" class="Wdgt widget_postlist">
     <div class="Title">{{$top['label']}}</div>
     <ul class="MovieList ">
         @foreach($top['data'] as $key => $movie)
