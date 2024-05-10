@@ -193,8 +193,42 @@
 
     <script>
         var episode_id = '{{$episode->id}}';
+        var jwplayer_advertising_file = "{{ Setting::get('jwplayer_advertising_file') }}";
+        var jwplayer_advertising_skipoffset = "{{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}";
+        var jwplayer_key = "{{ Setting::get('jwplayer_license') }}";
+        var jwplayerOptions = JSON.parse(`{!! Setting::get('jwplayer_options') !!}`) || {};
+        if (jwplayer_key) {
+            jwplayerOptions.key = jwplayer_key;
+        }
+        if (jwplayer_advertising_file) {
+            jwplayerOptions.advertising = {
+                tag: jwplayer_advertising_file,
+                client: "vast",
+                vpaidmode: "insecure",
+                skipoffset: jwplayer_advertising_skipoffset,
+                skipmessage: "Bỏ qua sau xx giây",
+                skiptext: "Bỏ qua"
+            };
+        }
+
+        jwplayerOptions = Object.assign({}, {
+            // aspectratio: "16:9",
+            width: "100%",
+            height: 720,
+            responsive: true,
+            playbackRateControls: true,
+            playbackRates: [0.25, 0.75, 1, 1.25],
+            sharing: { sites: ["reddit", "facebook", "twitter", "googleplus", "email", "linkedin", ]},
+            volume: 100,
+            mute: false,
+            autostart: false,
+            logo: {
+                file: "{{ Setting::get('jwplayer_logo_link') }}",
+                position: "{{ Setting::get('jwplayer_logo_position') }}",
+            },
+        }, jwplayerOptions);
+
         const wrapper = document.getElementById('VideoOption01');
-        const vastAds = "{{ Setting::get('jwplayer_advertising_file') }}";
 
         function chooseStreamingServer(el) {
             const type = el.dataset.type;
@@ -214,137 +248,55 @@
         }
 
         function renderPlayer(type, link, id) {
-            console.log('renderPlayer', {type, link, id});
-            if (type == 'embed') {
-                if (vastAds) {
-                    wrapper.innerHTML = `<div id="fake_jwplayer"></div>`;
-                    const fake_player = jwplayer("fake_jwplayer");
-                    const objSetupFake = {
-                        key: "{{ Setting::get('jwplayer_license') }}",
-                        aspectratio: "16:9",
-                        width: "100%",
-                        file: "/themes/toro/player/1s_blank.mp4",
-                        volume: 100,
-                        mute: false,
-                        autostart: true,
-                        advertising: {
-                            tag: "{{ Setting::get('jwplayer_advertising_file') }}",
-                            client: "vast",
-                            vpaidmode: "insecure",
-                            skipoffset: "{{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}",
-                            skipmessage: "Bỏ qua sau xx giây",
-                            skiptext: "Bỏ qua"
-                        }
-                    };
-                    fake_player.setup(objSetupFake);
-                    fake_player.on('complete', function(event) {
-                        $("#fake_jwplayer").remove();
-                        wrapper.innerHTML = `<iframe width="100%" height="100%" src="${link}" frameborder="0" scrolling="no"
-                        allowfullscreen="" allow='autoplay'></iframe>`
-                        fake_player.remove();
-                    });
+            // console.log('renderPlayer', {type, link, id});
+            // if (type == 'm3u8' || type == 'mp4') {}
 
-                    fake_player.on('adSkipped', function(event) {
-                        $("#fake_jwplayer").remove();
-                        wrapper.innerHTML = `<iframe width="100%" height="100%" src="${link}" frameborder="0" scrolling="no"
-                        allowfullscreen="" allow='autoplay'></iframe>`
-                        fake_player.remove();
-                    });
+            jwplayerOptions = Object.assign({}, {
+                file: link,
+            }, jwplayerOptions);
 
-                    fake_player.on('adComplete', function(event) {
-                        $("#fake_jwplayer").remove();
-                        wrapper.innerHTML = `<iframe width="100%" height="100%" src="${link}" frameborder="0" scrolling="no"
-                        allowfullscreen="" allow='autoplay'></iframe>`
-                        fake_player.remove();
-                    });
-                } else {
-                    if (wrapper) {
-                        wrapper.innerHTML = `<iframe width="100%" height="100%" src="${link}" frameborder="0" scrolling="no"
-                        allowfullscreen="" allow='autoplay'></iframe>`
-                    }
-                }
-                return;
-            }
+            wrapper.innerHTML = `<div id="jwplayer"></div>`;
+            const player = jwplayer("jwplayer");
 
-            if (type == 'm3u8' || type == 'mp4') {
-                wrapper.innerHTML = `<div id="jwplayer"></div>`;
-                const player = jwplayer("jwplayer");
+            player.setup(jwplayerOptions);
 
-                var jwplayer_key = "{{ Setting::get('jwplayer_license') }}";
-                var jwplayerOptions = JSON.parse(`{!! Setting::get('jwplayer_options') !!}`) || {};
-                if (jwplayer_key) {
-                    jwplayerOptions.key = jwplayer_key;
-                }
-                console.log({jwplayerOptions});
-                
-                const otherOptions = {
-                    // aspectratio: "16:9",
-                    width: "100%",
-                    height: 720,
-                    responsive: true,
-                    file: link,
-                    playbackRateControls: true,
-                    playbackRates: [0.25, 0.75, 1, 1.25],
-                    sharing: { sites: ["reddit", "facebook", "twitter", "googleplus", "email", "linkedin", ]},
-                    volume: 100,
-                    mute: false,
-                    autostart: false,
-                    logo: {
-                        file: "{{ Setting::get('jwplayer_logo_link') }}",
-                        position: "{{ Setting::get('jwplayer_logo_position') }}",
-                    },
-                    advertising: {
-                        tag: "{{ Setting::get('jwplayer_advertising_file') }}",
-                        client: "vast",
-                        vpaidmode: "insecure",
-                        skipoffset: "{{ (int) Setting::get('jwplayer_advertising_skipoffset') ?: 5 }}", // Bỏ qua quảng cáo trong vòng 5 giây
-                        skipmessage: "Bỏ qua sau xx giây",
-                        skiptext: "Bỏ qua"
-                    }
-                };
+            const resumeData = 'OPCMS-PlayerPosition-' + id;
 
-                const objSetup = Object.assign({}, otherOptions, jwplayerOptions);
-                console.log({objSetup});
-                player.setup(objSetup);
-
-                const resumeData = 'OPCMS-PlayerPosition-' + id;
-
-                player.on('ready', function() {
-                    if (typeof(Storage) !== 'undefined') {
-                        if (localStorage[resumeData] == '' || localStorage[resumeData] == 'undefined') {
-                            console.log("No cookie for position found");
-                            var currentPosition = 0;
+            player.on('ready', function() {
+                if (typeof(Storage) !== 'undefined') {
+                    if (localStorage[resumeData] == '' || localStorage[resumeData] == 'undefined') {
+                        console.log("No cookie for position found");
+                        var currentPosition = 0;
+                    } else {
+                        if (localStorage[resumeData] == "null") {
+                            localStorage[resumeData] = 0;
                         } else {
-                            if (localStorage[resumeData] == "null") {
-                                localStorage[resumeData] = 0;
-                            } else {
-                                var currentPosition = localStorage[resumeData];
-                            }
-                            console.log("Position cookie found: " + localStorage[resumeData]);
+                            var currentPosition = localStorage[resumeData];
                         }
-                        player.once('play', function() {
-                            console.log(Math.abs(player.getDuration() - currentPosition));
-                            if (currentPosition > 180 && Math.abs(player.getDuration() - currentPosition) > 5) {
-                                console.log('player.seek: ', currentPosition);
-                                player.seek(currentPosition);
-                            }
-                        });
-                        window.onunload = function() {
-                            localStorage[resumeData] = player.getPosition();
-                        }
-                    } else {
-                        console.log('Your browser is too old!');
+                        console.log("Position cookie found: " + localStorage[resumeData]);
                     }
-                });
+                    player.once('play', function() {
+                        console.log(Math.abs(player.getDuration() - currentPosition));
+                        if (currentPosition > 180 && Math.abs(player.getDuration() - currentPosition) > 5) {
+                            console.log('player.seek: ', currentPosition);
+                            player.seek(currentPosition);
+                        }
+                    });
+                    window.onunload = function() {
+                        localStorage[resumeData] = player.getPosition();
+                    }
+                } else {
+                    console.log('Your browser is too old!');
+                }
+            });
 
-                player.on('complete', function() {
-                    if (typeof(Storage) !== 'undefined') {
-                        localStorage.removeItem(resumeData);
-                    } else {
-                        console.log('Your browser is too old!');
-                    }
-                });
-            }
+            player.on('complete', function() {
+                if (typeof(Storage) !== 'undefined') {
+                    localStorage.removeItem(resumeData);
+                } else {
+                    console.log('Your browser is too old!');
+                }
+            });
         }
     </script>
     <script>
