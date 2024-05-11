@@ -340,10 +340,16 @@ class ThemeToroController
 
         $catalog->generateSeoTags();
 
+        $catalog_options = $catalog->getOptions();
+        @list('list_limit' => $list_limit, 'list_sort_by' => $list_sort_by, 'list_sort_order' => $list_sort_order) = $catalog_options;
+
         $cache_key = 'catalog:' . $catalog->id . ':page:' . $page;
         $movies = Cache::get($cache_key);
         if(is_null($movies) || !(int)setting('site_cache_enable', 1)) {
-            $movies = $catalog->movies()->paginate(get_theme_option('per_page_limit', 15));
+            $list_limit = $list_limit ?: get_theme_option('per_page_limit', 15);
+            $list_sort_by = $list_sort_by ?: 'id';
+            $list_sort_order = $list_sort_order ?: 'DESC';
+            $movies = $catalog->movies()->orderBy($list_sort_by, $list_sort_order)->paginate($list_limit);
             if ($movies->total()) {
                 Cache::put($cache_key, $movies, setting('site_cache_ttl', 5 * 60));
             } else {
