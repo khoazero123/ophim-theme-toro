@@ -1,4 +1,8 @@
+
 <div class="top-tags-container" style="text-align: center;">
+    @if ($ads_footer = get_theme_option('ads_footer'))
+        {!! $ads_footer !!}
+    @endif
     <div class="top-tags-title" style="text-align: center;">
         <h2>Top tìm kiếm</h2>
     </div>
