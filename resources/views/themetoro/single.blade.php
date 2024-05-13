@@ -2,9 +2,8 @@
 
 @php
     $watch_url = '';
-    if (!$currentMovie->is_copyright && count($currentMovie->episodes) && $currentMovie->getFirstEpisode()) {
-        $watch_url = $currentMovie->getFirstEpisode()
-            ->getUrl();
+    if (!$currentMovie->is_copyright && count($currentMovie->episodes) && ($firstEpisode = $currentMovie->firstEpisode)) {
+        $watch_url = $firstEpisode->getUrl();
     }
 @endphp
 
