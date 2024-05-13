@@ -167,10 +167,12 @@ class ThemeToroController
         if (is_null($movie)) abort(404);
         $movie->generateSeoTags();
 
-        $movie->increment('views', 1);
-        $movie->increment('views_day', 1);
-        $movie->increment('views_week', 1);
-        $movie->increment('views_month', 1);
+        $movie->withoutTimestamps(function() use ($movie) {
+            $movie->increment('views', 1);
+            $movie->increment('views_day', 1);
+            $movie->increment('views_week', 1);
+            $movie->increment('views_month', 1);
+        });
 
         // $movie->load('episodes');
         // $total_episodes = $movie->episodes->count();
@@ -210,16 +212,20 @@ class ThemeToroController
 
         $is_view_set = $request->cookie('views_episode_'.$episode_id);
         if (!$is_view_set) {
-            $movie->increment('views', 1);
-            $movie->increment('views_day', 1);
-            $movie->increment('views_week', 1);
-            $movie->increment('views_month', 1);
+            $movie->withoutTimestamps(function() use ($movie) {
+                $movie->increment('views', 1);
+                $movie->increment('views_day', 1);
+                $movie->increment('views_week', 1);
+                $movie->increment('views_month', 1);
+            });
             
             if ($video = $episode->video) {
-                $video->increment('views', 1);
-                $video->increment('views_day', 1);
-                $video->increment('views_week', 1);
-                $video->increment('views_month', 1);
+                $video->withoutTimestamps(function() use ($video) {
+                    $video->increment('views', 1);
+                    $video->increment('views_day', 1);
+                    $video->increment('views_week', 1);
+                    $video->increment('views_month', 1);
+                });
             }
             Cookie::queue(Cookie::make('views_episode_'.$episode_id, '1', 60));
         }
