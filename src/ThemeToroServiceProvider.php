@@ -375,6 +375,15 @@ class ThemeToroServiceProvider extends ServiceProvider
                         'tab' => 'Ads'
                     ],
                     [
+                        'name' => 'ads_catfish',
+                        'label' => 'Ads catfish',
+                        'type' => 'textarea',
+                        'value' => <<<EOT
+
+                        EOT,
+                        'tab' => 'Ads'
+                    ],
+                    [
                         'name' => 'ads_below_player',
                         'label' => 'Ads below player',
                         'type' => 'textarea',

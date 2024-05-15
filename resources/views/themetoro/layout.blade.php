@@ -36,6 +36,9 @@
 @section('footer')
     @include("themes::themetoro.inc.footer")
     {!! get_theme_option('footer') !!}
+    @if (get_theme_option('ads_catfish'))
+        {!! get_theme_option('ads_catfish') !!}
+    @endif
     <link rel="stylesheet" id="font-awesome-public_css-css"
           href="{{asset('themes/toro/css/font-awesome.css')}}?ver={{$theme_version}}"
           type="text/css" media="all"/>
