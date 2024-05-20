@@ -208,7 +208,11 @@ class ThemeToroController
         // $server_episodes = $movie->episodes()->where('slug', $episode->slug)->get();
         $server_episodes = [$episode];
 
-        $episode->generateSeoTags();
+        if (setting('movie_video_mode')) {
+            $movie->generateSeoTags();
+        } else {
+            $episode->generateSeoTags();
+        }
 
         $is_view_set = $request->cookie('views_episode_'.$episode_id);
         if (!$is_view_set) {
