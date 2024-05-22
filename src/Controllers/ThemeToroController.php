@@ -168,10 +168,10 @@ class ThemeToroController
         $movie->generateSeoTags();
 
         $movie->withoutTimestamps(function() use ($movie) {
-            $movie->increment('views', 1);
-            $movie->increment('views_day', 1);
-            $movie->increment('views_week', 1);
-            $movie->increment('views_month', 1);
+            $movie->incrementQuietly('views', 1);
+            $movie->incrementQuietly('views_day', 1);
+            $movie->incrementQuietly('views_week', 1);
+            $movie->incrementQuietly('views_month', 1);
         });
 
         // $movie->load('episodes');
@@ -217,18 +217,18 @@ class ThemeToroController
         $is_view_set = $request->cookie('views_episode_'.$episode_id);
         if (!$is_view_set) {
             $movie->withoutTimestamps(function() use ($movie) {
-                $movie->increment('views', 1);
-                $movie->increment('views_day', 1);
-                $movie->increment('views_week', 1);
-                $movie->increment('views_month', 1);
+                $movie->incrementQuietly('views', 1);
+                $movie->incrementQuietly('views_day', 1);
+                $movie->incrementQuietly('views_week', 1);
+                $movie->incrementQuietly('views_month', 1);
             });
             
             if ($video = $episode->video) {
                 $video->withoutTimestamps(function() use ($video) {
-                    $video->increment('views', 1);
-                    $video->increment('views_day', 1);
-                    $video->increment('views_week', 1);
-                    $video->increment('views_month', 1);
+                    $video->incrementQuietly('views', 1);
+                    $video->incrementQuietly('views_day', 1);
+                    $video->incrementQuietly('views_week', 1);
+                    $video->incrementQuietly('views_month', 1);
                 });
             }
             Cookie::queue(Cookie::make('views_episode_'.$episode_id, '1', 60));
@@ -397,7 +397,7 @@ class ThemeToroController
             return response([], 404);
         }
 
-        $movie->refresh()->increment('rating_count', 1, [
+        $movie->refresh()->incrementQuietly('rating_count', 1, [
             'rating_star' => $movie->rating_star +  ((int) request('rating') - $movie->rating_star) / ($movie->rating_count + 1)
         ]);
 
