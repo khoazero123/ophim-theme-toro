@@ -55,9 +55,10 @@
 
     <div class="Main Container">
         @foreach ($currentMovie->episodes->sortBy([['server', 'asc']])->groupBy('server') as $server => $data)
+            @if ($server && ($server_data = json_decode($server)))
             <section class="SeasonBx AACrdn">
                 <div class="Top AAIco-playlist_play AALink episodes-view episodes-load">
-                    <div class="Title"><a href="#">Danh sách tập <span>{{ json_decode($server)->name }}</span></a></div>
+                    <div class="Title"><a href="#">Danh sách tập <span>{{ $server_data->name }}</span></a></div>
                 </div>
                 <ul class="AZList">
                     @foreach ($data->sortByDesc('name', SORT_NATURAL)->groupBy('name') as $name => $item)
@@ -65,6 +66,7 @@
                     @endforeach
                 </ul>
             </section>
+            @endif
         @endforeach
     </div>
 @endsection
