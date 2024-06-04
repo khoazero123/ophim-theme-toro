@@ -41,27 +41,24 @@ class ThemeToroServiceProvider extends ServiceProvider
             $view->with('menu', $menu);
         });
         view()->composer('themes::themetoro.inc.rightbar', function ($view) {
-            $tops = Cache::remember('site.movies.tops', setting('site_cache_ttl', 5 * 60), function () {
-                $lists = get_theme_option('hotest');
-                $data = [];
-                foreach ($lists as $list) {
-                    try {
-                        if (!isset($list['label']) || empty($list['label']))
-                            continue;
-                        $movies = query_movies($list);
-                        $data[] = [
-                            'label' => $list['label'],
-                            'template' => $list['show_template'],
-                            'data' => $movies,
-                        ];
-                    } catch (\Exception $e) {
-                        Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
-                    }
+            $lists = get_theme_option('hotest');
+            $data = [];
+            foreach ($lists as $list) {
+                try {
+                    if (!isset($list['label']) || empty($list['label']))
+                        continue;
+                    $movies = query_movies($list);
+                    $data[] = [
+                        'label' => $list['label'],
+                        'template' => $list['show_template'],
+                        'data' => $movies,
+                    ];
+                } catch (\Exception $e) {
+                    Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
                 }
-                return $data;
-            });
+            }
 
-            $view->with('tops', $tops);
+            $view->with('tops', $data);
         });
         view()->composer('themes::themetoro.inc.footer', function ($view) {
             $order_by = get_theme_option('footer_tags_order_by', 'views_week');

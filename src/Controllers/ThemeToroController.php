@@ -88,53 +88,40 @@ class ThemeToroController
 
         $title = Setting::get('site_homepage_title');
 
-        $home_page_slider_poster = Cache::remember('site.movies.home_page_slider_poster', setting('site_cache_ttl', 5 * 60), function () {
-            $list = get_theme_option('home_page_slider_poster') ?: [];
-            if(empty($list)) return null;
-            $data = null;
-            $list = $list[0];
-            try {
-                if (!isset($list['label']) || empty($list['label']))
-                    return null;
-                $movies = query_movies($list);
-                $data = [
-                    'label' => $list['label'],
-                    'data' => $movies,
-                ];
-            } catch (\Exception $e) {
-                Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
-            }
-            return $data;
-        });
+        $home_page_slider_poster = $home_page_slider_thumb = $movies_latest = [];
 
-        $home_page_slider_thumb = Cache::remember('site.movies.home_page_slider_thumb', setting('site_cache_ttl', 5 * 60), function () {
-            $list = get_theme_option('home_page_slider_thumb') ?: [];
-            if(empty($list)) return null;
-            $data = null;
-            $list = $list[0];
+        if (($list = get_theme_option('home_page_slider_poster')) && !empty($list) && isset($list[0]['label']) && ($list[0]['label'])) {
             try {
-                if (!isset($list['label']) || empty($list['label']))
-                    return null;
-                $movies = query_movies($list);
-                $data = [
-                    'label' => $list['label'],
+                $movies = query_movies($list[0]);
+                $home_page_slider_poster = [
+                    'label' => $list[0]['label'],
                     'data' => $movies,
                 ];
             } catch (\Exception $e) {
                 Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
             }
-            return $data;
-        });
-        $cached_key = 'site.movies.latest_'.Str::slug(http_build_query($request->query()));
-        $movies_latest = Cache::remember($cached_key, setting('site_cache_ttl', 5 * 60), function () {
-            $lists = get_theme_option('latest');
-            $data = [];
+        }
+
+        if (($list = get_theme_option('home_page_slider_thumb')) && !empty($list) && isset($list[0]['label']) && ($list[0]['label'])) {
+            try {
+                $movies = query_movies($list[0]);
+                $home_page_slider_thumb = [
+                    'label' => $list[0]['label'],
+                    'data' => $movies,
+                ];
+            } catch (\Exception $e) {
+                Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
+            }
+        }
+
+        if (($lists = get_theme_option('latest')) && !empty($lists)) {
+            $movies_latest = [];
             foreach ($lists as $list) {
                 try {
                     if (!isset($list['label']) || empty($list['label']))
                         continue;
                     $movies = query_movies($list);
-                    $data[] = [
+                    $movies_latest[] = [
                         'label' => $list['label'],
                         'show_template' => $list['show_template'],
                         'data' => $movies,
@@ -144,8 +131,7 @@ class ThemeToroController
                     Log::error(__CLASS__.'::'.__FUNCTION__.':'.__LINE__.': '. $e->getMessage());
                 }
             }
-            return $data;
-        });
+        }
 
         $page = $this->getPageQueryOnHomePage($request);
         if ($page) {
