@@ -69,14 +69,15 @@ class ThemeToroController
 
             $this->generateSeoTags('search');
 
-            if ($data->count()) {
-                $tag = Tag::firstOrCreate(['name' => $keyword]);
-                $tag->where('id', $tag->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
-            }
-
-            $section_name = "Tìm kiếm phim: $keyword";
-            if (($page = request()->query('page')) > 1) {
-                $section_name .= " - trang " . $page;
+            if ($keyword) {
+                if ($data->count()) {
+                    $tag = Tag::firstOrCreate(['name' => $keyword]);
+                    $tag->where('id', $tag->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+                }
+                $section_name = "Tìm kiếm phim: $keyword";
+                if (($page = request()->query('page')) > 1) {
+                    $section_name .= " - trang " . $page;
+                }
             }
 
             return view('themes::themetoro.catalog', [
