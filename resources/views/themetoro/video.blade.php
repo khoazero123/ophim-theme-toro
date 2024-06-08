@@ -6,6 +6,11 @@
 @section('single_top')
     <div class="TPost A D">
         <div class="Container">
+        <div class="optns-bx">
+                <div class="drpdn">
+
+                </div>
+            </div>
             <div class="VideoPlayer">
                 <div id="VideoOption01" class="Video on">
 
@@ -26,6 +31,17 @@
         {!! $ads_below_player !!}
     </div>
     @endif
+
+    <div class="Main Container">
+        <section class="SeasonBx AACrdn">
+            <div class="Top AAIco-playlist_play AALink episodes-view episodes-load">
+                <div class="Title"><a href="#">Danh sách tập <span></span></a></div>
+            </div>
+            <ul class="AZList">
+                
+            </ul>
+        </section>
+    </div>
 
 @endsection
 
