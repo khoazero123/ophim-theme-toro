@@ -156,10 +156,7 @@ class ThemeToroController
         $movie->generateSeoTags();
 
         $movie->withoutTimestamps(function() use ($movie) {
-            $movie->incrementQuietly('views', 1);
-            $movie->incrementQuietly('views_day', 1);
-            $movie->incrementQuietly('views_week', 1);
-            $movie->incrementQuietly('views_month', 1);
+            $movie->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
         });
 
         // $movie->load('episodes');
@@ -181,16 +178,20 @@ class ThemeToroController
 
     public function getEpisode(Request $request)
     {
-        $episode_slug = $request->episode;
         $movie = Movie::fromCache()->findByKey('slug', $request->movie);
         if (is_null($movie)) abort(404);
+        // $fullUrl = $request->fullUrl();
+        if (setting('movie_video_mode') && $movie->video) {
+            $movie_url = $movie->getUrl();
+            return redirect($movie_url, 301);
+        }
         /** @var Episode */
         $episode_id = $request->id;
-        $episode = $movie->episodes->when($episode_id, function ($collection, $episode_id) {
-            return $collection->where('id', $episode_id);
-        })->firstWhere('slug', $episode_slug);
-
+        $episode = Episode::find($episode_id);
         if (is_null($episode)) abort(404);
+
+        $video = $episode->video;
+        if (is_null($video)) abort(404);
 
         // Not nessary yet
         // $server_episodes = $movie->episodes()->where('slug', $episode->slug)->get();
@@ -205,18 +206,12 @@ class ThemeToroController
         $is_view_set = $request->cookie('views_episode_'.$episode_id);
         if (!$is_view_set) {
             $movie->withoutTimestamps(function() use ($movie) {
-                $movie->incrementQuietly('views', 1);
-                $movie->incrementQuietly('views_day', 1);
-                $movie->incrementQuietly('views_week', 1);
-                $movie->incrementQuietly('views_month', 1);
+                $movie->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
             });
             
             if ($video = $episode->video) {
                 $video->withoutTimestamps(function() use ($video) {
-                    $video->incrementQuietly('views', 1);
-                    $video->incrementQuietly('views_day', 1);
-                    $video->incrementQuietly('views_week', 1);
-                    $video->incrementQuietly('views_month', 1);
+                    $video->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
                 });
             }
             Cookie::queue(Cookie::make('views_episode_'.$episode_id, '1', 60));
