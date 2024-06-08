@@ -16,6 +16,7 @@ use App\Models\Episode;
 use App\Models\Movie;
 use App\Models\Region;
 use App\Models\Tag;
+use App\Models\Video;
 use Illuminate\Support\Facades\Cookie;
 
 class ThemeToroController
@@ -235,6 +236,43 @@ class ThemeToroController
             'episode' => $episode,
             'server_episodes' => $server_episodes,
             'title' => $episode->name
+        ]);
+    }
+
+    public function watchVideo(Request $request)
+    {
+        $video_id = $request->id;
+        $video = Video::find($video_id);
+        $movie = Movie::fromCache()->findByKey('slug', $request->movie);
+        if (is_null($movie) || is_null($video)) abort(404);
+
+        $movie->generateSeoTags();
+
+        $is_view_set = $request->cookie('views_video_'.$video_id);
+        if (!$is_view_set) {
+            $movie->withoutTimestamps(function() use ($movie) {
+                $movie->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+            });
+            
+            $video->withoutTimestamps(function() use ($video) {
+                $video->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+            });
+            Cookie::queue(Cookie::make('views_video_'.$video_id, '1', 60));
+        }
+        $movie_related_cache_key = 'movie_related:' . $movie->id;
+        $movie_related = Cache::get($movie_related_cache_key) ?: [];
+        if(empty($movie_related) && count($movie->categories)) {
+            $movie_related = $movie->categories[0]->movies()->inRandomOrder()->limit(get_theme_option('movie_related_limit', 10))->get();
+            if ($movie_related->count()) {
+                Cache::put($movie_related_cache_key, $movie_related, setting('site_cache_ttl', 5 * 60));
+            }
+        }
+
+        return view('themes::themetoro.video', [
+            'currentMovie' => $movie,
+            'movie_related' => $movie_related,
+            'video' => $video,
+            'title' => $movie->name
         ]);
     }
 
