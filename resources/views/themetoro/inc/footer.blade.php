@@ -8,7 +8,7 @@
     </div>
     <div class="search-history" style="text-align: center;">
         @foreach($tags as $tag)
-            <a href="{{$tag->getSearchUrl()}}"><span class="">{{$tag->name}}</span></a>
+            <a href="{{$tag['search_url']}}"><span class="">{{$tag['name']}}</span></a>
         @endforeach
     </div>
 </div>

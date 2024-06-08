@@ -37,7 +37,10 @@ class ThemeToroServiceProvider extends ServiceProvider
             $view->with('title', $title);
         });
         view()->composer('themes::themetoro.inc.header', function ($view) {
-            $menu = \App\Models\Menu::getTree();
+            $menu = Cache::remember('header_menu', setting('site_cache_ttl', 5 * 60), function () {
+                $menu = \App\Models\Menu::getTree()->toArray();
+                return $menu;
+            });
             $view->with('menu', $menu);
         });
         view()->composer('themes::themetoro.inc.rightbar', function ($view) {
@@ -61,9 +64,12 @@ class ThemeToroServiceProvider extends ServiceProvider
             $view->with('tops', $data);
         });
         view()->composer('themes::themetoro.inc.footer', function ($view) {
-            $order_by = get_theme_option('footer_tags_order_by', 'views_week');
-            $limit = get_theme_option('footer_tags_limit', 50);
-            $tags = \App\Models\Tag::orderBy($order_by, 'desc')->limit($limit)->get();
+            $tags = Cache::remember('footer_tags', setting('site_cache_ttl', 5 * 60), function () {
+                $order_by = get_theme_option('footer_tags_order_by', 'views_week');
+                $limit = get_theme_option('footer_tags_limit', 50);
+                $tags = \App\Models\Tag::orderBy($order_by, 'desc')->limit($limit)->get()->toArray();
+                return $tags;
+            });
             $view->with('tags', $tags);
         });
 
