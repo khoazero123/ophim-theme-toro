@@ -156,7 +156,7 @@ class ThemeToroController
         $movie->generateSeoTags();
 
         $movie->withoutTimestamps(function() use ($movie) {
-            $movie->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+            $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
         });
 
         // $movie->load('episodes');
@@ -206,12 +206,12 @@ class ThemeToroController
         $is_view_set = $request->cookie('views_episode_'.$episode_id);
         if (!$is_view_set) {
             $movie->withoutTimestamps(function() use ($movie) {
-                $movie->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+                $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
             });
             
             if ($video = $episode->video) {
                 $video->withoutTimestamps(function() use ($video) {
-                    $video->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+                    $video->where('id', $video->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
                 });
             }
             Cookie::queue(Cookie::make('views_episode_'.$episode_id, '1', 60));
@@ -246,11 +246,11 @@ class ThemeToroController
         $is_view_set = $request->cookie('views_video_'.$video_id);
         if (!$is_view_set) {
             $movie->withoutTimestamps(function() use ($movie) {
-                $movie->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+                $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
             });
             
             $video->withoutTimestamps(function() use ($video) {
-                $video->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+                $video->where('id', $video->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
             });
             Cookie::queue(Cookie::make('views_video_'.$video_id, '1', 60));
         }
