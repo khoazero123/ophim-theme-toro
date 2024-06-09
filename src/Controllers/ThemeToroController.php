@@ -34,7 +34,11 @@ class ThemeToroController
             $keyword = str_replace(['-', '_'], ' ', $keyword);
         }
         if ($keyword || $request['filter']) {
-            $data = Movie::when(!empty($request['filter']['category']), function ($movie) {
+            $query = Movie::query();
+            if (setting('movie_video_mode')) {
+                $query->canPlay();
+            }
+            $data = $query->when(!empty($request['filter']['category']), function ($movie) {
                 $movie->whereHas('categories', function ($categories) {
                     $categories->where('id', request('filter')['category']);
                 });
@@ -279,7 +283,11 @@ class ThemeToroController
 
         $category->generateSeoTags();
 
-        $movies = $category->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit', 15));
+        $query = $category->movies();
+        if (setting('movie_video_mode')) {
+            $query->canPlay();
+        }
+        $movies = $query->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit', 15));
 
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
@@ -297,7 +305,11 @@ class ThemeToroController
 
         $region->generateSeoTags();
 
-        $movies = $region->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
+        $query = $region->movies();
+        if (setting('movie_video_mode')) {
+            $query->canPlay();
+        }
+        $movies = $query->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
@@ -315,7 +327,11 @@ class ThemeToroController
 
         $actor->generateSeoTags();
 
-        $movies = $actor->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
+        $query = $actor->movies();
+        if (setting('movie_video_mode')) {
+            $query->canPlay();
+        }
+        $movies = $query->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
@@ -333,7 +349,11 @@ class ThemeToroController
 
         $director->generateSeoTags();
 
-        $movies = $director->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
+        $query = $director->movies();
+        if (setting('movie_video_mode')) {
+            $query->canPlay();
+        }
+        $movies = $query->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
@@ -352,7 +372,11 @@ class ThemeToroController
 
         $tag->generateSeoTags();
 
-        $movies = $tag->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
+        $query = $tag->movies();
+        if (setting('movie_video_mode')) {
+            $query->canPlay();
+        }
+        $movies = $query->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
         return view('themes::themetoro.catalog', [
             'movies' => $movies,
             'tag' => $tag,
@@ -379,7 +403,11 @@ class ThemeToroController
             $list_limit = $list_limit ?: get_theme_option('per_page_limit', 15);
             $list_sort_by = $list_sort_by ?: 'id';
             $list_sort_order = $list_sort_order ?: 'DESC';
-            $movies = $catalog->movies()->orderBy($list_sort_by, $list_sort_order)->paginate($list_limit);
+            $query = $catalog->movies();
+            if (setting('movie_video_mode')) {
+                $query->canPlay();
+            }
+            $movies = $query->orderBy($list_sort_by, $list_sort_order)->paginate($list_limit);
             if ($movies->total()) {
                 Cache::put($cache_key, $movies, setting('site_cache_ttl', 5 * 60));
             } else {
