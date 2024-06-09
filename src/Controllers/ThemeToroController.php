@@ -245,6 +245,10 @@ class ThemeToroController
         $movie = Movie::fromCache()->findByKey('slug', $request->movie);
         if (is_null($movie) || is_null($video)) abort(404);
 
+        if (!$movie->canPlay()) {
+            return redirect('/');
+        }
+
         $movie->generateSeoTags();
 
         $is_view_set = $request->cookie('views_video_'.$video_id);
