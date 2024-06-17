@@ -184,8 +184,8 @@ class ThemeToroController
     {
         $movie = Movie::fromCache()->findByKey('slug', $request->movie);
         if (is_null($movie)) abort(404);
-        // $fullUrl = $request->fullUrl();
-        if (setting('movie_video_mode') && $movie->video) {
+
+        if (setting('movie_video_mode') && $movie->video && env('REDIRECT_TO_VIDEO_URL', true)) {
             $movie_url = $movie->getUrl();
             return redirect($movie_url, 301);
         }
