@@ -74,6 +74,7 @@ class ThemeToroController
 
             $this->generateSeoTags('search');
 
+            $section_name = "Danh sách phim";
             if ($keyword) {
                 if ($data->count()) {
                     $tag = Tag::firstOrCreate(['name' => $keyword]);
