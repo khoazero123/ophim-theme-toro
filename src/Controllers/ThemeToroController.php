@@ -241,9 +241,9 @@ class ThemeToroController
 
     public function watchVideo(Request $request)
     {
-        $video_id = $request->id;
-        $video = Video::find($video_id);
         $movie = Movie::fromCache()->findByKey('slug', $request->movie);
+        $video_id = (int)$request->id ?: ($movie ? $movie->video_id : null);
+        $video = $video_id ? Video::find($video_id) : null;
         if (is_null($movie) || is_null($video)) abort(404);
 
         if (!$movie->canPlay()) {

@@ -48,8 +48,12 @@ Route::group([
         ->where(['movie' => '.+', 'movie_id' => '[0-9]+', 'episode' => '.+', 'id' => '[0-9]+'])
         ->name('episodes.show');
 
-    Route::get(setting('site_routes_video', '/xem-video/{movie}/video-{id}'), [ThemeToroController::class, 'watchVideo'])
-        ->where(['movie' => '.+', 'movie_id' => '[0-9]+', 'id' => '[0-9]+'])
+    // Old route
+    Route::get('/xem-video/{movie}/video-{id}', [ThemeToroController::class, 'watchVideo'])
+        ->where(['movie' => '.+', 'movie_id' => '[0-9]+', 'id' => '[0-9]+']);
+    // New route for watch video
+    Route::get(setting('site_routes_video', '/xem-video/{movie}'), [ThemeToroController::class, 'watchVideo'])
+        ->where(['movie' => '.+', 'movie_id' => '[0-9]+'])
         ->name('videos.show');
 
     Route::post(sprintf('/%s/{movie}/{episode}/report', config('ophim.routes.movie', 'phim')), [ThemeToroController::class, 'reportEpisode'])->name('episodes.report');
