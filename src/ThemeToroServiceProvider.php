@@ -430,7 +430,7 @@ class ThemeToroServiceProvider extends ServiceProvider
     protected function bootSeoDefaults()
     {
         /** @var \League\Flysystem\Local\LocalFilesystemAdapter|\Illuminate\Filesystem\FilesystemAdapter $disk */
-        $disk = Storage::disk('images');
+        $disk = Storage::disk(env('IMAGE_DISK', 'images'));
         $site_meta_image = setting('site_meta_image');
         $site_meta_image = $site_meta_image ? $disk->url(setting('site_meta_image')) : null;
 
