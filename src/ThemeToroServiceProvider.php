@@ -73,7 +73,10 @@ class ThemeToroServiceProvider extends ServiceProvider
             $view->with('tags', $tags);
         });
 
-        $this->bootSeoDefaults();
+        if (!app()->runningInConsole()) {
+            // Fix generate sitemap use localhost domain
+            $this->bootSeoDefaults();
+        }
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'themes');
 
