@@ -186,7 +186,7 @@ class ThemeToroController
         $movie = Movie::where('slug', $request->movie)->first();
         if (is_null($movie)) abort(404);
 
-        if (setting('movie_video_mode') && $movie->video && env('REDIRECT_TO_VIDEO_URL', true)) {
+        if (setting('movie_video_mode') && $movie->video && env('REDIRECT_TO_VIDEO_URL', false)) {
             $movie_url = $movie->getUrl();
             return redirect($movie_url, 301);
         }
@@ -213,7 +213,7 @@ class ThemeToroController
             $movie->withoutTimestamps(function() use ($movie) {
                 $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
             });
-            
+
             if ($video = $episode->video) {
                 $video->withoutTimestamps(function() use ($video) {
                     $video->where('id', $video->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
@@ -246,10 +246,6 @@ class ThemeToroController
         $video = $video_id ? Video::find($video_id) : null;
         if (is_null($movie) || is_null($video)) abort(404);
 
-        if (!$movie->canPlay()) {
-            return redirect('/');
-        }
-
         $movie->generateSeoTags();
 
         $is_view_set = $request->cookie('views_video_'.$video_id);
@@ -257,7 +253,7 @@ class ThemeToroController
             $movie->withoutTimestamps(function() use ($movie) {
                 $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
             });
-            
+
             $video->withoutTimestamps(function() use ($video) {
                 $video->where('id', $video->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
             });
