@@ -291,6 +291,20 @@
             if (servers[0]) {
                 servers[0].click();
             }
+
+            setTimeout(() => {
+                fetch("{{ route('movie.view-counter', ['movie' => $currentMovie->slug]) }}", {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        movie_id: '{{$currentMovie->id}}',
+                        video_id: '{{$video->id}}',
+                    }),
+                });
+            }, 5000);
         });
     </script>
 

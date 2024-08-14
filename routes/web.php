@@ -58,6 +58,7 @@ Route::group([
 
     Route::post(sprintf('/%s/{movie}/{episode}/report', config('ophim.routes.movie', 'phim')), [ThemeToroController::class, 'reportEpisode'])->name('episodes.report');
     Route::post(sprintf('/%s/{movie}/rate', config('ophim.routes.movie', 'phim')), [ThemeToroController::class, 'rateMovie'])->name('movie.rating');
+    Route::post(sprintf('/%s/{movie}/view', config('ophim.routes.movie', 'phim')), [ThemeToroController::class, 'viewCounter'])->name('movie.view-counter');
 
     Route::get(setting('site_routes_movie', '/phim/{movie}'), [ThemeToroController::class, 'getMovieOverview'])
         ->where(['movie' => '.+', 'id' => '[0-9]+'])

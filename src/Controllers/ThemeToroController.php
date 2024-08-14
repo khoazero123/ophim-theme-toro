@@ -17,6 +17,7 @@ use App\Models\Movie;
 use App\Models\Region;
 use App\Models\Tag;
 use App\Models\Video;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cookie;
 
 class ThemeToroController
@@ -78,7 +79,9 @@ class ThemeToroController
             if ($keyword) {
                 if ($data->count()) {
                     $tag = Tag::firstOrCreate(['name' => $keyword]);
-                    $tag->where('id', $tag->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+                    Tag::withoutTimestamps(function() use ($tag) {
+                        $tag->where('id', $tag->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+                    });
                 }
                 $section_name = "Tìm kiếm phim: $keyword";
                 if (($page = request()->query('page')) > 1) {
@@ -160,9 +163,9 @@ class ThemeToroController
         if (is_null($movie)) abort(404);
         $movie->generateSeoTags();
 
-        $movie->withoutTimestamps(function() use ($movie) {
-            $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
-        });
+        // $movie->withoutTimestamps(function() use ($movie) {
+        //     $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+        // });
 
         // $movie->load('episodes');
         // $total_episodes = $movie->episodes->count();
@@ -208,7 +211,7 @@ class ThemeToroController
             $episode->generateSeoTags();
         }
 
-        $is_view_set = $request->cookie('views_episode_'.$episode_id);
+        /* $is_view_set = $request->cookie('views_episode_'.$episode_id);
         if (!$is_view_set) {
             $movie->withoutTimestamps(function() use ($movie) {
                 $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
@@ -220,7 +223,7 @@ class ThemeToroController
                 });
             }
             Cookie::queue(Cookie::make('views_episode_'.$episode_id, '1', 60));
-        }
+        } */
         $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key) ?: [];
         if(empty($movie_related) && count($movie->categories)) {
@@ -248,17 +251,6 @@ class ThemeToroController
 
         $movie->generateSeoTags();
 
-        $is_view_set = $request->cookie('views_video_'.$video_id);
-        if (!$is_view_set) {
-            $movie->withoutTimestamps(function() use ($movie) {
-                $movie->where('id', $movie->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
-            });
-
-            $video->withoutTimestamps(function() use ($video) {
-                $video->where('id', $video->id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
-            });
-            Cookie::queue(Cookie::make('views_video_'.$video_id, '1', 60));
-        }
         $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key) ?: [];
         if(empty($movie_related) && count($movie->categories)) {
@@ -434,6 +426,44 @@ class ThemeToroController
             'report_message' => request('message', ''),
             'has_report' => true
         ]);
+
+        return response([], 204);
+    }
+
+    public function viewCounter(Request $request, $movie_slug)
+    {
+        $movie_id = (int) $request->input('movie_id');
+        $video_id = (int) $request->input('video_id');
+        $episode_id = (int) $request->input('episode_id');
+
+        // $movie = Movie::where('slug', $movie_slug)->first();
+        // if (!$movie) {
+        //     return response([], 404);
+        // }
+        // $movie_id = $movie->id;
+        
+        $cookie_content = json_decode($request->cookie('views')?:'[]', true);
+        $logged_data = $cookie_content && isset($cookie_content[$movie_id]) ? $cookie_content[$movie_id] : false;
+
+        $view_date = $logged_data ? Carbon::createFromFormat('Y-m-d H:i:s', $logged_data['date'], config('app.timezone')) : now(config('app.timezone'));
+        // $diffInMinutes_0 = now(config('app.timezone'))->endOfDay()->diffInMinutes($view_date);
+        $diffInMinutes = $view_date->diffInMinutes(now(config('app.timezone'))->endOfDay());
+
+        if (!$logged_data || $diffInMinutes > 1440) {
+            Movie::withoutTimestamps(function() use ($movie_id) {
+                Movie::where('id', $movie_id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+            });
+
+            if ($video_id /* && ($video = Video::find($video_id)) */) {
+                Video::withoutTimestamps(function() use ($video_id) {
+                    Video::where('id', $video_id)->incrementEach(['views' => 1, 'views_day' => 1, 'views_week' => 1, 'views_month' => 1]);
+                });
+            }
+            $cookie_content[$movie_id] = [
+                'date' => now(config('app.timezone'))->format('Y-m-d H:i:s'),
+            ];
+            Cookie::queue(Cookie::make('views', json_encode($cookie_content), 1440));
+        }
 
         return response([], 204);
     }
