@@ -38,7 +38,7 @@
                 <div class="Title"><a href="#">Danh sách tập <span></span></a></div>
             </div>
             <ul class="AZList">
-                
+
             </ul>
         </section>
     </div>
@@ -274,6 +274,9 @@
                 } else {
                     console.log('Your browser is too old!');
                 }
+            });
+            player.on('error', function(err) {
+                console.log('player on error', err);
             });
         }
     </script>

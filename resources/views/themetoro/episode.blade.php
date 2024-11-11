@@ -314,6 +314,9 @@
                     console.log('Your browser is too old!');
                 }
             });
+            player.on('error', function(err) {
+                console.log('player on error', err);
+            });
         }
     </script>
     <script>
